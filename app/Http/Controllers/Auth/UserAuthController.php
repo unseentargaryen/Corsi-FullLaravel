@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Carbon\Carbon;
 use Dflydev\DotAccessData\Data;
+use http\Env\Response;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,7 +22,6 @@ class UserAuthController extends Controller
         $data = $request->validate([
             'name' => 'required|max:255',
             'surname' => 'required|max:255',
-            'check' => 'required',
             'email' => 'required|email|unique:users',
             'password' => P2::min(8)
                 ->mixedCase()
@@ -29,7 +29,7 @@ class UserAuthController extends Controller
                 ->numbers()
                 ->symbols()
                 ->uncompromised()
-                ->rules(["required", "confirmed"])
+                ->rules(["required", "confirmed"]),
         ]);
 
         $data['password'] = bcrypt($request->password);
@@ -38,7 +38,7 @@ class UserAuthController extends Controller
 
         $token = $user->createToken('API Token')->accessToken;
 
-        return response(['user' => $user, 'token' => $token]);
+        return route("home",['token'=>$token]);
     }
 
     public function login(Request $request)
@@ -120,14 +120,14 @@ class UserAuthController extends Controller
             : response(['code' => 501, 'message' => $status]);
     }
 
-    public function getUserFromBearer(Request $request)
-    {
-        $user = Auth::guard('api')->user();
-
-        if ($user !== null) {
-            return response(["code" => 200, "user" => $user]);
-        }
-        return response(["code" => 403, "user" => null]);
-
-    }
+//    public function getUserFromBearer(Request $request)
+//    {
+//        $user = Auth::guard('api')->user();
+//
+//        if ($user !== null) {
+//            return response(["code" => 200, "user" => $user]);
+//        }
+//        return response(["code" => 403, "user" => null]);
+//
+//    }
 }

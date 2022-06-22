@@ -4,8 +4,9 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CourseController;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/register', 'App\Http\Controllers\Auth\UserAuthController@register');
-Route::post('/login', 'App\Http\Controllers\Auth\UserAuthController@login')->name('login');
+Route::post('/login-script', 'App\Http\Controllers\Auth\UserAuthController@login')->name('login');
+Route::post('/register-script', 'App\Http\Controllers\Auth\UserAuthController@register')->name('register-script');
+
 Route::post('/verify-token', 'App\Http\Controllers\Auth\UserAuthController@verifyToken');
 Route::post('/reset-password-request', 'App\Http\Controllers\Auth\UserAuthController@resetPasswordRequest');
 Route::post('/reset-password', 'App\Http\Controllers\Auth\UserAuthController@resetPassword')->middleware('guest')->name('password.update');
