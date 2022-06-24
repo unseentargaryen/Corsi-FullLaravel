@@ -3,7 +3,6 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -40,19 +39,11 @@ class PasswordReset extends Notification
      * Get the mail representation of the notification.
      *
      * @param mixed $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
+     * @return MailMessage
      */
     public function toMail($notifiable)
     {
-        $mail = (new MailMessage())
-            ->from("icorsidellatana@gmail.com")
-            ->subject("Password Reset")
-            ->greeting("Ciao!")
-            ->line('è stata richiesta la reimpostazione della password')
-            ->action('REIMPOSTA PASSWORD', env("FE_URL").env("FE_RESET_PASSWORD_FORM_URL").$this->token.'/'.$this->email)
-            ->salutation("Saluti, I CORSI DELLA TANA")
-        ;
-
+        $mail = (new MailMessage())->view('auth.passwords.maillink', ['token' => $this->token]);
 
         return  $mail;
     }

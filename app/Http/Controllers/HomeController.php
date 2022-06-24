@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
+use App\Models\Course;
+use App\Models\Subcategory;
 use Illuminate\Contracts\Support\Renderable;
 
 class HomeController extends Controller
@@ -13,7 +16,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+
     }
 
     /**
@@ -23,6 +26,10 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $categories = Category::all();
+        $subcategories = Subcategory::all();
+        $courses = Course::all();
+
+        return view('home', ['categories' => $categories, 'subcategories' => $subcategories, 'courses' => $courses]);
     }
 }

@@ -18,6 +18,12 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+
+    <!-- CUSTOMS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 </head>
 <body>
 <div id="app">
@@ -26,52 +32,52 @@
             <a class="navbar-brand" href="{{ url('/') }}">
                 {{ config('app.name', 'Laravel') }}
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
-                <span class="navbar-toggler-icon"></span>
-            </button>
 
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <!-- Left Side Of Navbar -->
-                <ul class="navbar-nav me-auto">
-
-                </ul>
-
-                <!-- Right Side Of Navbar -->
-                <ul class="navbar-nav ms-auto">
-                    <!-- Authentication Links -->
+            <div class="btn-group dropdown position-absolute" style="right:3%">
+                <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="{{ asset('images/account.svg') }}" width="45px" height="45px"/>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-lg-start">
                     @guest
                         @if (Route::has('login'))
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                            <li class="nav-item dropdown">
+                                <button class="dropdown-item" onclick="location.href='{{ route('login') }}'">
+                                    <img src="{{ asset("images/login-icon.svg") }}" alt="login"/>
+                                    Login
+                                </button>
                             </li>
                         @endif
 
                         @if (Route::has('register'))
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
+                            <li class="nav-item dropdown">
+                                <button class="dropdown-item" onclick="location.href='{{ route('register') }}'">
+                                    <img src="{{ asset("images/register-icon.svg") }}" alt="register"/>
+                                    Registrati
+                                </button>
                             </li>
                         @endif
                     @else
-                        <li class="nav-item dropdown">
-                            <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
-                               data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                {{ Auth::user()->name }}
-                            </a>
-
-                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="{{ route('logout') }}"
-                                   onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
-                                    {{ __('Logout') }}
-                                </a>
-
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                    @csrf
-                                </form>
-                            </div>
+                        @if(Auth::user()->role === 'admin')
+                            <li class="nav-item dropdown">
+                                <button class="dropdown-item" onclick="location.href='{{ route('admin-dashboard') }}'">
+                                    <img src="{{ asset("images/dashboard-icon.svg") }}" alt="dashboard"/>
+                                    Admin Dashboard
+                                </button>
+                            </li>
+                        @endif
+                        <li>
+                            <hr class="dropdown-divider">
                         </li>
+                        <li class="nav-item dropdown">
+                            <button class="dropdown-item" type="button" href="{{ route('logout') }}"
+                                    onclick="event.preventDefault(); $('#logout-form').submit()">
+                                <img src="{{ asset("images/logout-icon.svg") }}" alt="logout"/>
+                                Logout
+                            </button>
+                        </li>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                            @csrf
+                        </form>
                     @endguest
                 </ul>
             </div>

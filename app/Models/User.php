@@ -4,17 +4,12 @@ namespace App\Models;
 
 
 use App\Notifications\PasswordReset;
-use Illuminate\Auth\Notifications\ResetPassword;
-use Illuminate\Contracts\Auth\CanResetPassword;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Password;
 use Laravel\Passport\HasApiTokens;
 
-class User extends Authenticatable implements CanResetPassword
+class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
