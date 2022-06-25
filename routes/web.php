@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-if (env('MAINTENCE') == true) {
+if (env('MAINTENCE') === false) {
     Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home'); //ha un middleware auth nella classe
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home'); //ha un middleware auth nella classe
 
