@@ -7,12 +7,6 @@ class AdminDashboardController
 
     public function index()
     {
-        return view('welcome');
+        return view('admin.dashboard');
     }
-
-    public function login()
-    {
-        return view('auth.login');
-    }
-
 }

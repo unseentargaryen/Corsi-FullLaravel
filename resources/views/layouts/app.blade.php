@@ -27,63 +27,8 @@
 </head>
 <body>
 <div id="app">
-    <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
-        <div class="container">
-            <a class="navbar-brand" href="{{ url('/') }}">
-                {{ config('app.name', 'Laravel') }}
-            </a>
-
-            <div class="btn-group dropdown position-absolute" style="right:3%">
-                <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img src="{{ asset('images/account.svg') }}" width="45px" height="45px"/>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-lg-start">
-                    @guest
-                        @if (Route::has('login'))
-                            <li class="nav-item dropdown">
-                                <button class="dropdown-item" onclick="location.href='{{ route('login') }}'">
-                                    <img src="{{ asset("images/login-icon.svg") }}" alt="login"/>
-                                    Login
-                                </button>
-                            </li>
-                        @endif
-
-                        @if (Route::has('register'))
-                            <li class="nav-item dropdown">
-                                <button class="dropdown-item" onclick="location.href='{{ route('register') }}'">
-                                    <img src="{{ asset("images/register-icon.svg") }}" alt="register"/>
-                                    Registrati
-                                </button>
-                            </li>
-                        @endif
-                    @else
-                        @if(Auth::user()->role === 'admin')
-                            <li class="nav-item dropdown">
-                                <button class="dropdown-item" onclick="location.href='{{ route('admin-dashboard') }}'">
-                                    <img src="{{ asset("images/dashboard-icon.svg") }}" alt="dashboard"/>
-                                    Admin Dashboard
-                                </button>
-                            </li>
-                        @endif
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li class="nav-item dropdown">
-                            <button class="dropdown-item" type="button" href="{{ route('logout') }}"
-                                    onclick="event.preventDefault(); $('#logout-form').submit()">
-                                <img src="{{ asset("images/logout-icon.svg") }}" alt="logout"/>
-                                Logout
-                            </button>
-                        </li>
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                            @csrf
-                        </form>
-                    @endguest
-                </ul>
-            </div>
-        </div>
-    </nav>
-
+    @include("layouts/topbar")
+    @include("layouts/sidebar")
     <main class="py-4">
         @yield('content')
     </main>
