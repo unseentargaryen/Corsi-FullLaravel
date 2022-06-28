@@ -12,11 +12,8 @@ return new class extends Migration {
      */
     public function up()
     {
-        Schema::table('subcategories', function (Blueprint $table) {
-            if (!Schema::hasColumn('subcategories', 'category_id')) {
-                $table->unsignedBigInteger('category_id');
-                $table->foreign('category_id')->references('id')->on('categories');
-            }
+        Schema::table('courses', function (Blueprint $table) {
+            $table->boolean('visible')->default(true);
         });
     }
 
@@ -27,6 +24,8 @@ return new class extends Migration {
      */
     public function down()
     {
-
+        Schema::table('courses', function (Blueprint $table) {
+            $table->dropColumn('visible');
+        });
     }
 };

@@ -2,22 +2,40 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Subcategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class SubcategoryController extends Controller
 {
     public function index()
     {
-        $subcategory = Subcategory::all();
+        $subcategories = Subcategory::all();
+        $categories = Category::all();
+
+        return view('admin.subcategories.index', ['subcategories' => $subcategories, 'categories' => $categories]);
+    }
+
+    public function all()
+    {
+        $subcategories = DB::table('subcategories')
+            ->join('categories', 'categories.id', '=', 'subcategories.category_id')
+            ->select('subcategories.*', 'categories.name')
+            ->get();
+
+        Log::info($subcategories);
+
 
         return response()->json([
             'success' => true,
-            'data' => $subcategory
+            'data' => $subcategories
         ]);
     }
 
-    public function show($id){
+    public function show($id)
+    {
         $subcategory = Subcategory::all()->find($id);
 
         if (!$subcategory) {
@@ -33,15 +51,15 @@ class SubcategoryController extends Controller
         ], 404);
     }
 
-    public function store(Request $request)
+    public function create(Request $request)
     {
         $this->validate($request, [
             'name' => 'required',
         ]);
 
-        $subcategory = new subcategory();
+        $subcategory = new Subcategory();
         $subcategory->name = $request->name;
-        $subcategory->category_id = $request->name;
+        $subcategory->category_id = 4;
 
         if ($subcategory->save($subcategory->toArray()))
             return response()->json([
@@ -51,18 +69,22 @@ class SubcategoryController extends Controller
         else
             return response()->json([
                 'success' => false,
-                'message' => 'subcategory not added'
+                'message' => 'Category not added'
             ], 500);
     }
 
-    public function update(Request $request, $id)
+    public function edit(Request $request)
     {
-        $subcategory = Subcategory::all()->find($id);
+        $this->validate($request, [
+            'id' => 'required',
+        ]);
+        $id = $request->id;
+        $subcategory = Subcategory::find($id);
 
         if (!$subcategory) {
             return response()->json([
                 'success' => false,
-                'message' => 'subcategory not found'
+                'message' => 'Subcategory not found'
             ], 404);
         }
 
@@ -75,29 +97,28 @@ class SubcategoryController extends Controller
         else
             return response()->json([
                 'success' => false,
-                'message' => 'subcategory can not be updated'
+                'message' => 'Subcategory can not be updated'
             ], 500);
     }
 
-    public function destroy($id)
+    public function toggleVisibility(Request $request)
     {
-        $subcategory = Subcategory::all()->find($id);
+        $id = $request->get('id');
+        $subcategory = Subcategory::find($id);
 
         if (!$subcategory) {
             return response()->json([
                 'success' => false,
-                'message' => 'subcategory not found'
+                'message' => 'Subcategory not found'
             ], 404);
         }
 
-        if ($subcategory->delete()) {
-            return response()->json([
-                'success' => true
-            ]);
-        } else {
-            return response()->json([
-                'success' => false,
-                'message' => 'subcategory can not be deleted'
-            ], 500);
-        }
-    }}
+        $subcategory->visible = !$subcategory->visible;
+
+        $subcategory->save();
+
+        return response()->json([
+            'success' => true
+        ], 200);
+    }
+}

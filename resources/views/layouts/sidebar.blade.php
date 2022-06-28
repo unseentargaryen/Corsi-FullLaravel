@@ -8,20 +8,20 @@
         <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-start" id="menu">
             <li class="nav-item dropdown w-100">
                 <button class="dropdown-item" onclick="location.href='{{ route('home') }}'">
-                    <img src="{{ asset("images/login-icon.svg") }}" alt="login"/>
+                    <img src="{{ asset("images/homepage-icon.svg") }}" alt="login"/>
                     Home
                 </button>
             </li>
             @if(Auth::user() && Auth::user()->role === 'admin')
                 <li class="nav-item dropdown w-100">
-                    <button class="dropdown-item" onclick="location.href='{{ route('login') }}'">
-                        <img src="{{ asset("images/login-icon.svg") }}" alt="login"/>
+                    <button class="dropdown-item" onclick="location.href='{{ route('categories-dashboard') }}'">
+                        <img src="{{ asset("images/categories-icon.svg") }}" alt="login"/>
                         Categorie
                     </button>
                 </li>
                 <li class="nav-item dropdown w-100">
-                    <button class="dropdown-item" onclick="location.href='{{ route('login') }}'">
-                        <img src="{{ asset("images/login-icon.svg") }}" alt="login"/>
+                    <button class="dropdown-item" onclick="location.href='{{ route('subcategories-dashboard') }}'">
+                        <img src="{{ asset("images/subcategories-icon.svg") }}" alt="login"/>
                         Sottocategorie
                     </button>
                 </li>

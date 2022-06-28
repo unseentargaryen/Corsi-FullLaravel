@@ -9,15 +9,18 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $category = Category::all();
-
-        return response()->json([
-            'success' => true,
-            'data' => $category
-        ]);
+        return view('admin.categories.index', ['categories' => Category::all()]);
     }
 
-    public function show($id){
+    public function all()
+    {
+        $categories = Category::all();
+
+        return response()->json($categories);
+    }
+
+    public function show($id)
+    {
         $category = Category::all()->find($id);
 
         if (!$category) {
@@ -33,7 +36,7 @@ class CategoryController extends Controller
         ], 400);
     }
 
-    public function store(Request $request)
+    public function create(Request $request)
     {
         $this->validate($request, [
             'name' => 'required',
@@ -54,9 +57,13 @@ class CategoryController extends Controller
             ], 500);
     }
 
-    public function update(Request $request, $id)
+    public function edit(Request $request)
     {
-        $category = Category::all()->find($id);
+        $this->validate($request, [
+            'id' => 'required',
+        ]);
+        $id = $request->id;
+        $category = Category::find($id);
 
         if (!$category) {
             return response()->json([
@@ -78,9 +85,10 @@ class CategoryController extends Controller
             ], 500);
     }
 
-    public function destroy($id)
+    public function toggleVisibility(Request $request)
     {
-        $category = Category::all()->find($id);
+        $id = $request->get('id');
+        $category = Category::find($id);
 
         if (!$category) {
             return response()->json([
@@ -89,15 +97,14 @@ class CategoryController extends Controller
             ], 404);
         }
 
-        if ($category->delete()) {
-            return response()->json([
-                'success' => true
-            ]);
-        } else {
-            return response()->json([
-                'success' => false,
-                'message' => 'Category can not be deleted'
-            ], 500);
-        }
+        $category->visible = !$category->visible;
+
+        $category->save();
+
+        return response()->json([
+            'success' => true
+        ], 200);
     }
+
+
 }
