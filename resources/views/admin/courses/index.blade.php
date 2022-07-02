@@ -159,7 +159,7 @@
 
         }
         const showCourse = (id) => {
-            location.href = '/courses/show/' + id;
+            location.href = 'courses/show/' + id;
         }
         const actionsFormatter = (value, row) => {
             return ('<button class="btn" onclick="showCourse(' + row.id + ')"><img src="{{ asset("images/zoom-icon.svg") }}" alt="dettagli"></img></button>');
@@ -181,6 +181,10 @@
                 }
             })
             return subcat.name;
+        }
+
+        const priceColumnFormatter = (value) => {
+            return value + "€";
         }
 
         var courseAddModal = new bootstrap.Modal(document.getElementById("courseAddModal"), {});
@@ -220,6 +224,7 @@
                 field: 'price',
                 title: 'Prezzo',
                 class: 'text-center w-5',
+                formatter: priceColumnFormatter,
             }, {
                 field: 'description',
                 title: 'Descrizione',

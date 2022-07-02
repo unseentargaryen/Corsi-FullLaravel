@@ -1,240 +1,183 @@
 @extends('layouts.app')
 @section('content')
-    <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.20.2/dist/bootstrap-table.min.css">
-    <script src="https://unpkg.com/bootstrap-table@1.20.2/dist/bootstrap-table.min.js"></script>
+
     <link href="{{ asset('css/font-awesome.min.css') }}" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-            crossorigin="anonymous"></script>
-
+    <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css"/>
     <style>
-        .select2-container {
-            z-index: 100000;
+        .dz-details {
+            display: none;
         }
+
     </style>
-    <!-- EDIT Modal -->
-    <div class="modal fade" id="subcategoryEditModal" tabindex="1" aria-labelledby="subcategoryEditModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="subcategoryEditModalLabel">Dettagli Sottocategoria</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="w-100">
-                        <label id="subcategory-name-label">Nome Sottocategoria</label>
-                        <input id="edit-name-input" name="name" class="form form-control">
-                        <input id="details-id" name="id" type="hidden" class="subcategory-id-hidden">
-                    </div>
-                    <div class="w-100 mt-3 d-flex flex-column">
-                        <label>Categoria</label>
-                        <select id="edit-category-select" class="select2">
-                            @foreach($categories as $category)
-                                <option value="{{ $category->id }}">{{ $category->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="mt-3 alert d-flex flex-row align-items-center justify-content-between" role="alert"
-                         id="edit-alert">
-                        <p id="edit-alert-p" class="my-auto"></p>
-                        <div class="spinner-border text-secondary" role="status" id="edit-alert-spinner"></div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-success" onclick="handleEditSubmit()">SALVA</button>
-                    <button type="button" class="btn btn-outline-primary" id="toggle-visibility-btn"
-                            onclick="handleToggleVisibility()"></button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        CHIUDI
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
 
+    <div class="row mb-3">
+        <div class="col-6 offset-3">
+            <form action="#"
+                  class="card bg-white border-0 shadow p-5"
+                  id="editCourseForm" method="POST">
 
-    <!-- ADD Modal -->
-    <div class="modal fade" id="courseAddModal" tabindex="1" aria-labelledby="courseAddModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="courseAddModal">Aggiungi Corso</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="w-100">
-                        <label>Nome Corso</label>
-                        <input id="add-name-input" name="name" class="form form-control">
+                <div class="row">
+                    <div class="col-6">
+                        <label>Nome del corso:</label>
+                        <input type="text" id="name" name="name" value="{{$course->name}}" class="form form-control"
+                               required/>
                     </div>
-                    <div class="w-100 mt-3 d-flex flex-column">
-                        <label>Sottocategoria</label>
-                        <select id="add-subcategory-select" class="select2" data-live-search="true">
-                            @foreach($subcategories as $subcategory)
-                                <option value="{{ $subcategory->id }}">{{ $subcategory->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="w-100 mt-3 d-flex flex-column">
+                    <div class="col-6">
                         <label>Prezzo in €</label>
-                        <input id="add-price-input" name="price" class="form form-control" type="number" min="0">
-                    </div>
-                    <div class="w-100 mt-3 d-flex flex-column">
-                        <label>Descrizione</label>
-                        <textarea class="form-control" name="description" id="add-description-input"
-                                  rows="3"></textarea>
-                    </div>
-                    <div class="mt-3 alert d-flex flex-row align-items-center justify-content-between" role="alert"
-                         id="add-alert">
-                        <p id="add-alert-p" class="my-auto"></p>
-                        <div class="spinner-border text-secondary" role="status" id="add-alert-spinner"></div>
+                        <input type="text" id="price" name="price" value="{{$course->price}}" class="form form-control"
+                               required/>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-success" onclick="handleAddSubmit()">SALVA</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        CHIUDI
-                    </button>
+                <div class="row mt-4">
+                    <div class="col-6 d-flex align-items-center">
+                        <div class="form-check">
+                            <input class="form-check-input" name="visible" type="checkbox" value="true" id="visible"
+                                   @if($course->visible === 1) checked @endif>
+                            <label class="form-check-label" for="visible">
+                                Attivo
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-6 d-flex flex-column">
+                        <label id="category-label">Sottocategorie</label>
+                        <select id="subcategory-select" name="subcategory" class="select2" required>
+                            <option>SELEZIONA UNA SOTTOCATEGORIA</option>
+                            @foreach($subcategories as $subcat)
+                                <option value="{{ $subcat['id'] }}"
+                                        @if($course->subcategory_id === $subcat->id) selected @endif>{{ $subcat['name'] }}</option>
+                            @endforeach
+                        </select>
+                        <p class="text-danger" id="subcategoryPERROR">Seleziona un' opzione</p>
+                    </div>
                 </div>
-            </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <label for="description"> Descrizione del corso:</label>
+                        <textarea type="text" id="description" name="description"
+                                  class="form form-control">{{$course->description}}</textarea>
+                    </div>
+                </div>
+                <div class="row mt-5">
+                    <div class="alert alert-danger" role="alert" id="submitAlert">
+                        Errore durante il salvataggio
+                    </div>
+                    <div class="alert alert-success" role="alert" id="submitSuccessAlert">
+                        Modifiche salvate correttamente
+                    </div>
+                </div>
+                <div class="row mt-5">
+                    <div class="col-4 offset-4">
+                        <button class="btn btn-success w-100">SALVA</button>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 
-    <!-- ADD Modal -->
-
-    <div class="w-100 h-100 p-5">
-        <table id="table" class="w-100 h-100 bg-white"></table>
+    <div class="row">
+        <div class="col-6 offset-3">
+            <h3>Immagine principale</h3>
+            <form action=""
+                  class="dropzone bg-white border-0 card shadow h-100"
+                  id="coverDropzone" method="POST">
+                <input type="file" class="btn btn-secondary"/>
+            </form>
+        </div>
     </div>
+
+    <div class="row mt-5">
+        <div class="col-6 offset-3">
+            <h3>Immagini</h3>
+            <form action=""
+                  class="dropzone bg-white border-0 card shadow h-100"
+                  id="imagesDropzone" method="POST">
+                <input type="file" class="btn btn-secondary"/>
+            </form>
+        </div>
+    </div>
+
 
     <script>
-        let selected_course;
-        let new_course;
-        let subcategories = {{ Js::from($subcategories) }};
+        $('#subcategoryPERROR').hide();
+        $('#submitAlert').hide();
+        $('#submitSuccessAlert').hide();
 
-        $('.select2').select2();
+        $('#editCourseForm').on('submit', function (e) {
+            $('#submitAlert').hide();
+            $('#subcategoryPERROR').hide();
 
-        let addNameInput = $('#add-name-input');
-        let addPriceInput = $('#add-price-input');
-        let addDescriptionInput = $('#add-description-input');
-        let addSubcategorySelect = $('#add-subcategory-select');
-        let addAlert = $('#add-alert');
-        let addAlertP = $('#add-alert-p');
-        let addAlertSpinner = $('#add-alert-spinner');
-        addAlertSpinner.hide();
-
-        const handleAddSubmit = () => {
-            axios('{{ route('courses-create') }}', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                },
-                data: {
-                    name: addNameInput.val(),
-                    subcategory_id: addSubcategorySelect.val(),
-                    price: addPriceInput.val(),
-                    description: addDescriptionInput.val(),
-                }
-            }).then((res) => {
-                if (res.status === 200) {
-                    if (res.data.success === true) {
-                        addAlertP.text('Corso aggiunto correttamente');
-                        addAlert.removeClass('alert-danger');
-                        addAlert.addClass('alert-success');
-                        addAlertSpinner.show();
+            e.preventDefault();
+            if (parseInt($('#subcategory-select').val())) {
+                axios.post('{{ route('course-edit',['id' => $course->id]) }}', {
+                    name: $('#name').val(),
+                    price: $('#price').val(),
+                    description: $('#description').val(),
+                    visible: $('#visible').is(':checked') ? 1 : 0,
+                    subcategory_id: parseInt($('#subcategory-select').val()),
+                }).then((res) => {
+                    if (res.data.success) {
+                        $('#submitSuccessAlert').show();
                         setTimeout(() => {
                             location.reload();
                         }, 3000);
                     } else {
-                        throw 'Impossibile aggiungere il Corso';
+                        $('#submitAlert').show();
                     }
-                } else {
-                    throw 'Impossibile aggiungere il Corso';
-                }
-            }).catch((msg) => {
-                addAlertP.text(msg);
-                addAlert.addClass('alert-danger');
-                addAlert.removeClass('alert-success');
-            });
-
-        }
-        const showCourse = (id) => {
-            location.href = '/courses/show/' + id;
-        }
-        const actionsFormatter = (value, row) => {
-            return ('<button class="btn" onclick="showCourse(' + row.id + ')"><img src="{{ asset("images/zoom-icon.svg") }}" alt="dettagli"></img></button>');
-        }
-
-        const visibilityColumnFormatter = (value) => {
-            let src = "{{ asset("images/visibility-icon.svg") }}";
-            if (!value) {
-                src = "{{ asset("images/visibilityoff-icon.svg") }}";
+                }).catch(() => {
+                    $('#submitAlert').show();
+                });
             }
-
-            return ('<img alt="visibility" src="' + src + '">');
-        }
-
-        const subcategoryColumnFormatter = (value) => {
-            let subcat = subcategories.find((cat) => {
-                if (parseInt(value) === cat.id) {
-                    return cat;
-                }
-            })
-            return subcat.name;
-        }
-
-        var courseAddModal = new bootstrap.Modal(document.getElementById("courseAddModal"), {});
-        const openAddModal = () => {
-            courseAddModal.show();
-        }
-
-        function actionBarButtons() {
-            return {
-                btnAdd: {
-                    text: 'Aggiungi Corso',
-                    icon: 'fa fa-plus',
-                    event: function () {
-                        openAddModal();
-                    },
-                    attributes: {
-                        title: 'Aggiungi Corso'
-                    }
-                }
-            }
-        }
-
-        $('#table').bootstrapTable({
-            data: {{ Js::from($courses) }},
-            search: true,
-            searchHighlight: true,
-            locale: 'en-US',
-            buttons: actionBarButtons,
-            columns: [{
-                field: 'name',
-                title: 'Nome Corso'
-            }, {
-                field: 'subcategory_id',
-                title: 'Sottocategoria',
-                formatter: subcategoryColumnFormatter,
-            }, {
-                field: 'price',
-                title: 'Prezzo',
-                class: 'text-center w-5',
-            }, {
-                field: 'description',
-                title: 'Descrizione',
-                class: 'text-center w-25',
-            }, {
-                field: 'visible',
-                title: 'Attivo',
-                class: 'text-center w-5',
-                formatter: visibilityColumnFormatter,
-            }, {
-                field: 'actions',
-                title: 'Azioni',
-                class: 'text-center w-10',
-                formatter: actionsFormatter,
-            }]
         })
+
+        $('.select2').select2();
+        Dropzone.options.coverDropzone = {
+            maxFiles: 1,
+            url: '{{route("set-course-cover",["course_id" => $course->id])}}',
+            acceptedFiles: 'image/*',
+            autoProcessQueue: true,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            init: function () {
+                let myDropzone = this;
+
+                // If you only have access to the original image sizes on your server,
+                // and want to resize them in the browser:
+                axios.get('{{ route('get-course-cover',['course_id' => $course->id]) }}').then((response) => {
+                    myDropzone.displayExistingFile({}, "data:image/jpeg;base64, " + response.data.data);
+                })
+
+                this.on("success", () => {
+                    location.reload();
+                });
+            },
+        };
+
+        Dropzone.options.imagesDropzone = {
+            maxFiles: 1,
+            url: '{{route("add-course-image",["course_id" => $course->id])}}',
+            acceptedFiles: 'image/*',
+            autoProcessQueue: true,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            init: function () {
+                let myDropzone = this;
+
+                // If you only have access to the original image sizes on your server,
+                // and want to resize them in the browser:
+                axios.get('{{ route('get-course-images',['course_id' => $course->id]) }}').then((response) => {
+
+                    response.data.data.map((img) => {
+                        myDropzone.displayExistingFile({}, "data:image/jpeg;base64, " + img.src);
+                    });
+                })
+
+                this.on("success", () => {
+                    location.reload();
+                });
+            },
+        };
     </script>
 @endsection

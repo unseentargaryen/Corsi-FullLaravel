@@ -4,8 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Course;
+use App\Models\CourseImage;
 use App\Models\Subcategory;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use PHPUnit\Exception;
 
 class CourseController extends Controller
 {
@@ -44,6 +48,23 @@ class CourseController extends Controller
             'success' => true,
             'data' => $course->toArray()
         ], 200);
+    }
+
+    public function showAdmin($id)
+    {
+
+        $course = Course::find($id);
+        $subcategories = Subcategory::all();
+
+        if (!$course) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Course not found '
+            ], 404);
+        }
+
+        return view('admin.courses.show', ['course' => $course, 'subcategories' => $subcategories]);
+
     }
 
     public function get($id)
@@ -102,18 +123,18 @@ class CourseController extends Controller
     public function getCover($course_id)
     {
         $course = Course::all()->find($course_id);
-        $images = $course->images->first();
+        $image = $course->cover_src;
 
-        if (!$images) {
+        if (!$image) {
             return response()->json([
                 'success' => false,
-                'message' => 'Course not found '
+                'message' => 'Cover not found '
             ], 404);
         }
 
         return response()->json([
             'success' => true,
-            'data' => $images->toArray()
+            'data' => $image
         ], 200);
     }
 
@@ -144,15 +165,17 @@ class CourseController extends Controller
             ], 500);
     }
 
-    public function edit(Request $request)
+    public function edit(Request $request, $course_id)
     {
+        Log::info($request);
         $this->validate($request, [
-            'id' => 'required',
             'name' => 'required',
-            'subcategory_id' => 'required',
+            'price' => 'required',
+            'visible' => 'required',
+            'subcategory_id' => 'exists:subcategories,id',
         ]);
-        $id = $request->id;
-        $course = Course::find($id);
+
+        $course = Course::find($course_id);
 
         if (!$course) {
             return response()->json([
@@ -161,7 +184,9 @@ class CourseController extends Controller
             ], 404);
         }
 
+        $course->visible = $request->visible;
         $updated = $course->fill($request->all())->save();
+
 
         if ($updated)
             return response()->json([
@@ -194,5 +219,75 @@ class CourseController extends Controller
         return response()->json([
             'success' => true
         ], 200);
+    }
+
+    public function setCover(Request $request, $course_id)
+    {
+        try {
+            $image = base64_encode(file_get_contents($request->file));
+        } catch (Exception $e) {
+            Log::error($e);
+        }
+
+        $course = Course::find($course_id);
+
+        if (!$course) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Course not found'
+            ], 404);
+        }
+
+        $course->cover_src = $image;
+        $course->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Cover updated'
+        ], 200);
+    }
+
+    public function addImage(Request $request, $course_id)
+    {
+        try {
+            $src = base64_encode(file_get_contents($request->file));
+        } catch (Exception $e) {
+            if (!$src) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Immagine non valida'
+                ], 404);
+            }
+            Log::error($e);
+        }
+
+        $course = Course::find($course_id);
+
+        if (!$course) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Course not found'
+            ], 404);
+        }
+
+        $courseImage = new CourseImage();
+        $courseImage->course_id = $course->id;
+        $courseImage->src = $src;
+        $courseImage->created_at = Carbon::now();
+        $courseImage->updated_at = Carbon::now();
+
+        $courseImage = $courseImage->save();
+
+        if ($courseImage) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Immagine aggiunta'
+            ], 200);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Errore'
+        ], 500);
     }
 }
