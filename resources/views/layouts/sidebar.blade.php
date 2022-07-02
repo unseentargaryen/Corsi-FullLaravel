@@ -26,8 +26,8 @@
                     </button>
                 </li>
                 <li class="nav-item dropdown w-100">
-                    <button class="dropdown-item" onclick="location.href='{{ route('login') }}'">
-                        <img src="{{ asset("images/login-icon.svg") }}" alt="login"/>
+                    <button class="dropdown-item" onclick="location.href='{{ route('courses-dashboard') }}'">
+                        <img src="{{ asset("images/course-icon.svg") }}" alt="login"/>
                         Corsi
                     </button>
                 </li>

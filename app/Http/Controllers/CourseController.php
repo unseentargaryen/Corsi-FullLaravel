@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Course;
 use App\Models\Subcategory;
 use Illuminate\Http\Request;
@@ -9,6 +10,16 @@ use Illuminate\Http\Request;
 class CourseController extends Controller
 {
     public function index()
+    {
+        $courses = Course::all();
+        $subcategories = Subcategory::all();
+        $categories = Category::all();
+
+        return view('admin.courses.index', ['courses' => $courses, 'subcategories' => $subcategories, 'categories' => $categories]);
+    }
+
+
+    public function all()
     {
         $courses = Course::all();
 
@@ -20,8 +31,25 @@ class CourseController extends Controller
 
     public function show($id)
     {
-        $course = Course::all()->find($id);
 
+        $course = Course::find($id);
+        if (!$course) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Course not found '
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $course->toArray()
+        ], 200);
+    }
+
+    public function get($id)
+    {
+
+        $course = Course::find($id);
         if (!$course) {
             return response()->json([
                 'success' => false,
@@ -89,18 +117,20 @@ class CourseController extends Controller
         ], 200);
     }
 
-    public function store(Request $request)
+    public function create(Request $request)
     {
         $this->validate($request, [
             'name' => 'required',
-            'description' => 'required',
-            'price' => 'required'
+            'subcategory_id' => 'required',
+            'price' => 'required',
+            'description' => 'required'
         ]);
 
         $course = new Course();
         $course->name = $request->name;
         $course->description = $request->description;
         $course->price = $request->price;
+        $course->subcategory_id = $request->subcategory_id;
 
         if ($course->save($course->toArray()))
             return response()->json([
@@ -114,9 +144,15 @@ class CourseController extends Controller
             ], 500);
     }
 
-    public function update(Request $request, $id)
+    public function edit(Request $request)
     {
-        $course = Course::all()->find($id);
+        $this->validate($request, [
+            'id' => 'required',
+            'name' => 'required',
+            'subcategory_id' => 'required',
+        ]);
+        $id = $request->id;
+        $course = Course::find($id);
 
         if (!$course) {
             return response()->json([
@@ -138,9 +174,11 @@ class CourseController extends Controller
             ], 500);
     }
 
-    public function destroy($id)
+
+    public function toggleVisibility(Request $request)
     {
-        $course = Course::all()->find($id);
+        $id = $request->get('id');
+        $course = Course::find($id);
 
         if (!$course) {
             return response()->json([
@@ -149,15 +187,12 @@ class CourseController extends Controller
             ], 404);
         }
 
-        if ($course->delete()) {
-            return response()->json([
-                'success' => true
-            ]);
-        } else {
-            return response()->json([
-                'success' => false,
-                'message' => 'Course can not be deleted'
-            ], 500);
-        }
+        $course->visible = !$course->visible;
+
+        $course->save();
+
+        return response()->json([
+            'success' => true
+        ], 200);
     }
 }

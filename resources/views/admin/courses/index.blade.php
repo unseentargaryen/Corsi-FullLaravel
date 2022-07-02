@@ -7,21 +7,33 @@
             integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
             crossorigin="anonymous"></script>
 
-
+    <style>
+        .select2-container {
+            z-index: 100000;
+        }
+    </style>
     <!-- EDIT Modal -->
-    <div class="modal fade" id="categoryEditModal" tabindex="1" aria-labelledby="categoryEditModalLabel"
+    <div class="modal fade" id="subcategoryEditModal" tabindex="1" aria-labelledby="subcategoryEditModalLabel"
          aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="categoryEditModalLabel">Dettagli Categoria</h5>
+                    <h5 class="modal-title" id="subcategoryEditModalLabel">Dettagli Sottocategoria</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="w-100">
-                        <label id="category-name-label">Nome Categoria</label>
+                        <label id="subcategory-name-label">Nome Sottocategoria</label>
                         <input id="edit-name-input" name="name" class="form form-control">
-                        <input id="details-id" name="id" type="hidden" class="category-id-hidden">
+                        <input id="details-id" name="id" type="hidden" class="subcategory-id-hidden">
+                    </div>
+                    <div class="w-100 mt-3 d-flex flex-column">
+                        <label>Categoria</label>
+                        <select id="edit-category-select" class="select2">
+                            @foreach($categories as $category)
+                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="mt-3 alert d-flex flex-row align-items-center justify-content-between" role="alert"
                          id="edit-alert">
@@ -43,18 +55,35 @@
 
 
     <!-- ADD Modal -->
-    <div class="modal fade" id="categoryAddModal" tabindex="1" aria-labelledby="categoryAddModalLabel"
+    <div class="modal fade" id="courseAddModal" tabindex="1" aria-labelledby="courseAddModalLabel"
          aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="categoryAddModal">Aggiungi Categoria</h5>
+                    <h5 class="modal-title" id="courseAddModal">Aggiungi Corso</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="w-100">
-                        <label>Nome Categoria</label>
+                        <label>Nome Corso</label>
                         <input id="add-name-input" name="name" class="form form-control">
+                    </div>
+                    <div class="w-100 mt-3 d-flex flex-column">
+                        <label>Sottocategoria</label>
+                        <select id="add-subcategory-select" class="select2" data-live-search="true">
+                            @foreach($subcategories as $subcategory)
+                                <option value="{{ $subcategory->id }}">{{ $subcategory->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="w-100 mt-3 d-flex flex-column">
+                        <label>Prezzo in €</label>
+                        <input id="add-price-input" name="price" class="form form-control" type="number" min="0">
+                    </div>
+                    <div class="w-100 mt-3 d-flex flex-column">
+                        <label>Descrizione</label>
+                        <textarea class="form-control" name="description" id="add-description-input"
+                                  rows="3"></textarea>
                     </div>
                     <div class="mt-3 alert d-flex flex-row align-items-center justify-content-between" role="alert"
                          id="add-alert">
@@ -79,86 +108,37 @@
     </div>
 
     <script>
-        let selected_cat;
-        let new_cat;
+        let selected_course;
+        let new_course;
+        let subcategories = {{ Js::from($subcategories) }};
 
-        let editVisibilityBtn = $('#toggle-visibility-btn');
-        const checkVisibilityButtonText = () => {
-            if (selected_cat.visible) {
-                editVisibilityBtn.text('NASCONDI');
-            } else {
-                editVisibilityBtn.text('MOSTRA');
-            }
-        }
-
-        let editNameInput = $('#edit-name-input');
-        let categoryIdHidden = $('.category-id-hidden');
-        const onDetailsModalOpen = (id, name, visible) => {
-            selected_cat = {
-                id, name, visible
-            }
-            editNameInput.val(selected_cat.name);
-            categoryIdHidden.val(selected_cat.id);
-            checkVisibilityButtonText();
-        }
-
-        let editAlert = $('#edit-alert');
-        let editAlertP = $('#edit-alert-p');
-        let editAlertSpinner = $('#edit-alert-spinner');
-        editAlertSpinner.hide();
-        const handleEditSubmit = () => {
-            axios('{{ route('categories-edit') }}', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                },
-                data: {
-                    id: selected_cat.id,
-                    name: editNameInput.val(),
-                }
-            }).then((res) => {
-                if (res.status === 200) {
-                    if (res.data.success === true) {
-                        editAlertP.text('Categoria aggiornata correttamente');
-                        editAlert.removeClass('alert-danger');
-                        editAlert.addClass('alert-success');
-                        editAlertSpinner.show();
-                        setTimeout(() => {
-                            location.reload();
-                        }, 3000);
-                    } else {
-                        throw 'Impossibile aggiornare la categoria';
-                    }
-                } else {
-                    throw 'Impossibile aggiornare la categoria';
-                }
-            }).catch((msg) => {
-                editAlertP.text(msg);
-                editAlert.addClass('alert-danger');
-                editAlert.removeClass('alert-success');
-            });
-        }
+        $('.select2').select2();
 
         let addNameInput = $('#add-name-input');
+        let addPriceInput = $('#add-price-input');
+        let addDescriptionInput = $('#add-description-input');
+        let addSubcategorySelect = $('#add-subcategory-select');
         let addAlert = $('#add-alert');
         let addAlertP = $('#add-alert-p');
         let addAlertSpinner = $('#add-alert-spinner');
         addAlertSpinner.hide();
 
         const handleAddSubmit = () => {
-            axios('{{ route('categories-create') }}', {
+            axios('{{ route('courses-create') }}', {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
                 },
-                data: JSON.stringify({
+                data: {
                     name: addNameInput.val(),
-                })
+                    subcategory_id: addSubcategorySelect.val(),
+                    price: addPriceInput.val(),
+                    description: addDescriptionInput.val(),
+                }
             }).then((res) => {
-                console.log(res)
                 if (res.status === 200) {
                     if (res.data.success === true) {
-                        addAlertP.text('Categoria aggiunta correttamente');
+                        addAlertP.text('Corso aggiunto correttamente');
                         addAlert.removeClass('alert-danger');
                         addAlert.addClass('alert-success');
                         addAlertSpinner.show();
@@ -166,10 +146,10 @@
                             location.reload();
                         }, 3000);
                     } else {
-                        throw 'Impossibile aggiungere la categoria';
+                        throw 'Impossibile aggiungere il Corso';
                     }
                 } else {
-                    throw 'Impossibile aggiungere la categoria';
+                    throw 'Impossibile aggiungere il Corso';
                 }
             }).catch((msg) => {
                 addAlertP.text(msg);
@@ -178,46 +158,11 @@
             });
 
         }
-
-        const handleToggleVisibility = () => {
-            editVisibilityBtn.attr('disabled', '');
-            axios('{{ route('categories-toggle-visibility') }}', {
-                method: 'PATCH',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                },
-                data: {
-                    id: selected_cat.id
-                }
-            }).then((res) => {
-                if (res.status === 200) {
-                    if (res.data.success === true) {
-                        selected_cat.visible = !selected_cat.visible;
-                        checkVisibilityButtonText();
-                        editAlertP.text('Categoria aggiornata correttamente');
-                        editAlert.removeClass('alert-danger');
-                        editAlert.addClass('alert-success');
-                        editAlertSpinner.show();
-                        setTimeout(() => {
-                            location.reload();
-                        }, 3000);
-                    } else {
-                        throw 'Impossibile aggiornare la categoria';
-                    }
-                } else {
-                    throw 'Impossibile aggiornare la categoria';
-                }
-            }).catch((msg) => {
-                editAlertP.text(msg);
-                editAlert.addClass('alert-danger');
-                editAlert.removeClass('alert-success');
-            }).finally(() => {
-                editVisibilityBtn.removeAttr('disabled');
-            });
+        const showCourse = (id) => {
+            location.href = '/courses/show/' + id;
         }
-
         const actionsFormatter = (value, row) => {
-            return ('<button onclick="onDetailsModalOpen(' + row.id + ',\'' + row.name + '\',' + row.visible + ')" data-bs-toggle="modal" data-bs-target="#categoryEditModal" class="btn"><img src="{{ asset("images/settings-icon.svg") }}" alt="dettagli"></img></button>');
+            return ('<button class="btn" onclick="showCourse(' + row.id + ')"><img src="{{ asset("images/zoom-icon.svg") }}" alt="dettagli"></img></button>');
         }
 
         const visibilityColumnFormatter = (value) => {
@@ -229,35 +174,56 @@
             return ('<img alt="visibility" src="' + src + '">');
         }
 
-        var categoryAddModal = new bootstrap.Modal(document.getElementById("categoryAddModal"), {});
+        const subcategoryColumnFormatter = (value) => {
+            let subcat = subcategories.find((cat) => {
+                if (parseInt(value) === cat.id) {
+                    return cat;
+                }
+            })
+            return subcat.name;
+        }
+
+        var courseAddModal = new bootstrap.Modal(document.getElementById("courseAddModal"), {});
         const openAddModal = () => {
-            categoryAddModal.show();
+            courseAddModal.show();
         }
 
         function actionBarButtons() {
             return {
                 btnAdd: {
-                    text: 'Aggiungi categoria',
+                    text: 'Aggiungi Corso',
                     icon: 'fa fa-plus',
                     event: function () {
                         openAddModal();
                     },
                     attributes: {
-                        title: 'Aggiungi categoria'
+                        title: 'Aggiungi Corso'
                     }
                 }
             }
         }
 
         $('#table').bootstrapTable({
-            data: {{ Js::from($categories) }},
+            data: {{ Js::from($courses) }},
             search: true,
             searchHighlight: true,
             locale: 'en-US',
             buttons: actionBarButtons,
             columns: [{
                 field: 'name',
-                title: 'Nome Categoria'
+                title: 'Nome Corso'
+            }, {
+                field: 'subcategory_id',
+                title: 'Sottocategoria',
+                formatter: subcategoryColumnFormatter,
+            }, {
+                field: 'price',
+                title: 'Prezzo',
+                class: 'text-center w-5',
+            }, {
+                field: 'description',
+                title: 'Descrizione',
+                class: 'text-center w-25',
             }, {
                 field: 'visible',
                 title: 'Attivo',

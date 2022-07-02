@@ -100,7 +100,8 @@
 
     <script>
         let selected_subcat;
-        let new_cat;
+        let new_subcat;
+        let categories = {{ Js::from($categories) }};
 
         $('.select2').select2();
 
@@ -120,7 +121,6 @@
             selected_subcat = {
                 id, name, visible, category_id
             }
-            console.log(category_id);
             editNameInput.val(selected_subcat.name);
             editCategorySelect.val(selected_subcat.category_id);
             editCategorySelect.trigger('change');
@@ -141,6 +141,7 @@
                 data: {
                     id: selected_subcat.id,
                     name: editNameInput.val(),
+                    category_id: editCategorySelect.val(),
                 }
             }).then((res) => {
                 if (res.status === 200) {
@@ -166,6 +167,8 @@
         }
 
         let addNameInput = $('#add-name-input');
+        let addCategorySelect = $('#add-category-select');
+
         let addAlert = $('#add-alert');
         let addAlertP = $('#add-alert-p');
         let addAlertSpinner = $('#add-alert-spinner');
@@ -179,9 +182,9 @@
                 },
                 data: {
                     name: addNameInput.val(),
+                    category_id: addCategorySelect.val(),
                 }
             }).then((res) => {
-                console.log(res)
                 if (res.status === 200) {
                     if (res.data.success === true) {
                         addAlertP.text('Sottocategoria aggiunta correttamente');
@@ -255,6 +258,15 @@
             return ('<img alt="visibility" src="' + src + '">');
         }
 
+        const categoryColumnFormatter = (value) => {
+            let cat = categories.find((cat) => {
+                if (parseInt(value) === cat.id) {
+                    return cat;
+                }
+            })
+            return cat.name;
+        }
+
         var subcategoryAddModal = new bootstrap.Modal(document.getElementById("subcategoryAddModal"), {});
         const openAddModal = () => {
             subcategoryAddModal.show();
@@ -278,7 +290,6 @@
         $('#table').bootstrapTable({
             data: {{ Js::from($subcategories) }},
             search: true,
-            showColumns: true,
             searchHighlight: true,
             locale: 'en-US',
             buttons: actionBarButtons,
@@ -289,10 +300,11 @@
                 field: 'category_id',
                 title: 'Categoria',
                 class: 'text-center',
+                formatter: categoryColumnFormatter,
             }, {
                 field: 'visible',
                 title: 'Attivo',
-                class: 'text-center w-10',
+                class: 'text-center w-5',
                 formatter: visibilityColumnFormatter,
             }, {
                 field: 'actions',

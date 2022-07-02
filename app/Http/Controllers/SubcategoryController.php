@@ -6,7 +6,6 @@ use App\Models\Category;
 use App\Models\Subcategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class SubcategoryController extends Controller
 {
@@ -24,9 +23,6 @@ class SubcategoryController extends Controller
             ->join('categories', 'categories.id', '=', 'subcategories.category_id')
             ->select('subcategories.*', 'categories.name')
             ->get();
-
-        Log::info($subcategories);
-
 
         return response()->json([
             'success' => true,
@@ -55,11 +51,12 @@ class SubcategoryController extends Controller
     {
         $this->validate($request, [
             'name' => 'required',
+            'category_id' => 'required',
         ]);
 
         $subcategory = new Subcategory();
         $subcategory->name = $request->name;
-        $subcategory->category_id = 4;
+        $subcategory->category_id = $request->category_id;
 
         if ($subcategory->save($subcategory->toArray()))
             return response()->json([
@@ -77,6 +74,8 @@ class SubcategoryController extends Controller
     {
         $this->validate($request, [
             'id' => 'required',
+            'name' => 'required',
+            'category_id' => 'required',
         ]);
         $id = $request->id;
         $subcategory = Subcategory::find($id);

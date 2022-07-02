@@ -11903,6 +11903,10 @@ textarea.form-control-lg {
     width: 10%;
 }
 
+.w-5 {
+    width: 5%;
+}
+
 .fa-plus-custom {
     background: url(../public/images/settings-icon.svg);
 }
