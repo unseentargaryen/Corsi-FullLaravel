@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('course_images', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->longText('src');
+            $table->longText('filename')->nullable();
             $table->string('mime_type')->nullable();
             $table->foreignId('course_id')->on('courses')->onDelete('no action');
         });

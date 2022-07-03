@@ -79,9 +79,8 @@
         <div class="col-6 offset-3">
             <h3>Immagine principale</h3>
             <form action=""
-                  class="dropzone bg-white border-0 card shadow h-100"
+                  class="dropzone bg-white border-0 shadow h-100"
                   id="coverDropzone" method="POST">
-                <input type="file" class="btn btn-secondary"/>
             </form>
         </div>
     </div>
@@ -90,9 +89,8 @@
         <div class="col-6 offset-3">
             <h3>Immagini</h3>
             <form action=""
-                  class="dropzone bg-white border-0 card shadow h-100"
+                  class="dropzone bg-white border-0 shadow"
                   id="imagesDropzone" method="POST">
-                <input type="file" class="btn btn-secondary"/>
             </form>
         </div>
     </div>
@@ -134,6 +132,7 @@
         Dropzone.options.coverDropzone = {
             maxFiles: 1,
             url: '{{route("set-course-cover",["course_id" => $course->id])}}',
+            method: "POST",
             acceptedFiles: 'image/*',
             autoProcessQueue: true,
             headers: {
@@ -145,7 +144,7 @@
                 // If you only have access to the original image sizes on your server,
                 // and want to resize them in the browser:
                 axios.get('{{ route('get-course-cover',['course_id' => $course->id]) }}').then((response) => {
-                    myDropzone.displayExistingFile({}, "data:image/jpeg;base64, " + response.data.data);
+                    myDropzone.displayExistingFile({}, "{{ url("/") }}/public/courses_images/" + response.data.data);
                 })
 
                 this.on("success", () => {
@@ -155,10 +154,11 @@
         };
 
         Dropzone.options.imagesDropzone = {
-            maxFiles: 1,
             url: '{{route("add-course-image",["course_id" => $course->id])}}',
+            method: "POST",
             acceptedFiles: 'image/*',
             autoProcessQueue: true,
+            addRemoveLinks: true,
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
@@ -170,7 +170,7 @@
                 axios.get('{{ route('get-course-images',['course_id' => $course->id]) }}').then((response) => {
 
                     response.data.data.map((img) => {
-                        myDropzone.displayExistingFile({}, "data:image/jpeg;base64, " + img.src);
+                        myDropzone.displayExistingFile({}, "{{ url("/") }}/public/courses_images/" + img.filename);
                     });
                 })
 

@@ -9,7 +9,6 @@ use App\Models\Subcategory;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use PHPUnit\Exception;
 
 class CourseController extends Controller
 {
@@ -120,24 +119,6 @@ class CourseController extends Controller
         ], 200);
     }
 
-    public function getCover($course_id)
-    {
-        $course = Course::all()->find($course_id);
-        $image = $course->cover_src;
-
-        if (!$image) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Cover not found '
-            ], 404);
-        }
-
-        return response()->json([
-            'success' => true,
-            'data' => $image
-        ], 200);
-    }
-
     public function create(Request $request)
     {
         $this->validate($request, [
@@ -221,13 +202,30 @@ class CourseController extends Controller
         ], 200);
     }
 
+
+    public function getCover($course_id)
+    {
+        $course = Course::all()->find($course_id);
+        $image = $course->cover_filename;
+
+        if (!$image) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Cover not found '
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $image
+        ], 200);
+    }
+
     public function setCover(Request $request, $course_id)
     {
-        try {
-            $image = base64_encode(file_get_contents($request->file));
-        } catch (Exception $e) {
-            Log::error($e);
-        }
+        $file = $request->file;
+        $filename = date('YmdHi') . $file->getClientOriginalName();
+        $file->move(public_path('public/courses_images'), $filename);
 
         $course = Course::find($course_id);
 
@@ -238,7 +236,7 @@ class CourseController extends Controller
             ], 404);
         }
 
-        $course->cover_src = $image;
+        $course->cover_filename = $filename;
         $course->save();
 
         return response()->json([
@@ -249,17 +247,10 @@ class CourseController extends Controller
 
     public function addImage(Request $request, $course_id)
     {
-        try {
-            $src = base64_encode(file_get_contents($request->file));
-        } catch (Exception $e) {
-            if (!$src) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Immagine non valida'
-                ], 404);
-            }
-            Log::error($e);
-        }
+
+        $file = $request->file;
+        $filename = date('YmdHi') . $file->getClientOriginalName();
+        $file->move(public_path('public/courses_images'), $filename);
 
         $course = Course::find($course_id);
 
@@ -272,7 +263,7 @@ class CourseController extends Controller
 
         $courseImage = new CourseImage();
         $courseImage->course_id = $course->id;
-        $courseImage->src = $src;
+        $courseImage->filename = $filename;
         $courseImage->created_at = Carbon::now();
         $courseImage->updated_at = Carbon::now();
 
@@ -288,6 +279,6 @@ class CourseController extends Controller
         return response()->json([
             'success' => false,
             'message' => 'Errore'
-        ], 500);
+        ], 501);
     }
 }
