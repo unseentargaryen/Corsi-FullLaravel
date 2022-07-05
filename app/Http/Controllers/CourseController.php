@@ -8,7 +8,7 @@ use App\Models\CourseImage;
 use App\Models\Subcategory;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\File;
 
 class CourseController extends Controller
 {
@@ -34,7 +34,6 @@ class CourseController extends Controller
 
     public function show($id)
     {
-
         $course = Course::find($id);
         if (!$course) {
             return response()->json([
@@ -43,10 +42,8 @@ class CourseController extends Controller
             ], 404);
         }
 
-        return response()->json([
-            'success' => true,
-            'data' => $course->toArray()
-        ], 200);
+        return view('show_course', ['course' => $course]);
+
     }
 
     public function showAdmin($id)
@@ -101,31 +98,12 @@ class CourseController extends Controller
         ], 200);
     }
 
-    public function getImages($course_id)
-    {
-        $course = Course::all()->find($course_id);
-        $images = $course->images;
-
-        if (!$images) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Course not found '
-            ], 404);
-        }
-
-        return response()->json([
-            'success' => true,
-            'data' => $images->toArray()
-        ], 200);
-    }
-
     public function create(Request $request)
     {
         $this->validate($request, [
             'name' => 'required',
             'subcategory_id' => 'required',
             'price' => 'required',
-            'description' => 'required'
         ]);
 
         $course = new Course();
@@ -148,7 +126,7 @@ class CourseController extends Controller
 
     public function edit(Request $request, $course_id)
     {
-        Log::info($request);
+
         $this->validate($request, [
             'name' => 'required',
             'price' => 'required',
@@ -180,29 +158,6 @@ class CourseController extends Controller
             ], 500);
     }
 
-
-    public function toggleVisibility(Request $request)
-    {
-        $id = $request->get('id');
-        $course = Course::find($id);
-
-        if (!$course) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Course not found'
-            ], 404);
-        }
-
-        $course->visible = !$course->visible;
-
-        $course->save();
-
-        return response()->json([
-            'success' => true
-        ], 200);
-    }
-
-
     public function getCover($course_id)
     {
         $course = Course::all()->find($course_id);
@@ -225,7 +180,7 @@ class CourseController extends Controller
     {
         $file = $request->file;
         $filename = date('YmdHi') . $file->getClientOriginalName();
-        $file->move(public_path('public/courses_images'), $filename);
+        $file->move(public_path('courses_images'), $filename);
 
         $course = Course::find($course_id);
 
@@ -245,12 +200,31 @@ class CourseController extends Controller
         ], 200);
     }
 
+    public function getImages($course_id)
+    {
+        $course = Course::all()->find($course_id);
+        $images = $course->images;
+
+        if (!$images) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Course not found '
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $images->toArray()
+        ], 200);
+    }
+
+
     public function addImage(Request $request, $course_id)
     {
 
         $file = $request->file;
         $filename = date('YmdHi') . $file->getClientOriginalName();
-        $file->move(public_path('public/courses_images'), $filename);
+        $file->move(public_path('courses_images'), $filename);
 
         $course = Course::find($course_id);
 
@@ -281,4 +255,32 @@ class CourseController extends Controller
             'message' => 'Errore'
         ], 501);
     }
+
+    public function removeCourseImage(Request $request)
+    {
+
+        if (!$request->filename) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Need a filename '
+            ], 422);
+        }
+
+        $image = CourseImage::where('filename', '=', $request->filename);
+
+        if (!$image) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Image not found '
+            ], 404);
+        }
+
+        $image->delete();
+        File::delete(public_path('courses_images') . "/" . $request->filename);
+
+        return response()->json([
+            'success' => true,
+        ], 200);
+    }
+
 }

@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
-use App\Http\Controllers\CourseController;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Course extends Model{
+class Course extends Model
+{
     use HasFactory;
 
     protected $fillable = [
@@ -16,12 +16,19 @@ class Course extends Model{
         'subcategory_id',
     ];
 
-    public function subcategory(){
+    public function subcategory()
+    {
         return $this->belongsTo(Subcategory::class);
     }
 
-    public function images(){
+    public function images()
+    {
         return $this->hasMany(CourseImage::class);
+    }
+
+    public function lessons()
+    {
+        return $this->hasMany(Lesson::class);
     }
 
 }
