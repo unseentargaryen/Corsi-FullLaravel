@@ -70,7 +70,7 @@
             @endguest
         </ul>
     </div>
-    <div class="col-12 d-flex justify-content-center">
+    <div class="col-12 d-flex justify-content-center p-2">
         @include('templates/logo')
     </div>
 </div>
