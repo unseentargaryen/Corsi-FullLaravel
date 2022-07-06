@@ -16,13 +16,13 @@
 
     <link href='/plugins/fullcalendar/main.css' rel='stylesheet'/>
     <script src='/plugins/fullcalendar/main.js'></script>
-
+    <title>CORSO DI DETAILING: {{ $course->name}}</title>
     <div class="modal fade" id="prenotationModal" tabindex="1" aria-labelledby="prenotationModalLabel"
          aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title fw-bolder" id="prenotationModalLabel">Prenota ora!</h5>
+                    <h2 class="modal-title fw-bolder" id="prenotationModalLabel">PRENOTA ORA!</h2>
 
                 </div>
                 <div class="modal-body">
@@ -49,37 +49,37 @@
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-12 col-xs-6 mx-auto">
-            <h1 class="fw-bold text-uppercase p-1">{{ $course->name }}</h1>
-            <div class="swiper">
-                <div class="swiper-wrapper">
-                    @foreach($course->images as $image)
-                        <div class="swiper-slide">
-                            <img src="{{ url("/")."/courses_images/".$image->filename }}" class="img-fluid"
-                                 alt="course image"/>
-                        </div>
-                    @endforeach
+    <div class="col px-5">
+        <div class="row">
+            <div class="col-12 col-xs-6 mx-auto">
+                <h1 class="fw-bold text-uppercase p-1">{{ $course->name }}</h1>
+                <div class="swiper">
+                    <div class="swiper-wrapper">
+                        @foreach($course->images as $image)
+                            <div class="swiper-slide">
+                                <img src="{{ url("/")."/courses_images/".$image->filename }}" class="img-fluid"
+                                     alt="course image"/>
+                            </div>
+                        @endforeach
+                    </div>
+                    <div class="swiper-button-prev"></div>
+                    <div class="swiper-button-next"></div>
                 </div>
-                <div class="swiper-button-prev"></div>
-                <div class="swiper-button-next"></div>
             </div>
         </div>
-    </div>
-    <div class="row mt-3">
-        <div class="col-12 col-xs-6 mx-auto">
-            <p class="p-1">{{ $course->description }}</p>
+        <div class="row mt-3">
+            <div class="col-12 col-xs-6 mx-auto">
+                <h3 class="p-1">{{ $course->description }}</h3>
+            </div>
         </div>
-    </div>
-    <div class="row mt-3">
-        <div class="col-10 offset-1 col-md-6 offset-md-3 text-end">
-            <p>Prezzo: {{ $course->price }} €</p>
+        <div class="row mt-3 text-end">
+            <h4>Prezzo: {{ $course->price }} €</h4>
         </div>
-    </div>
 
-    <div class="row mt-3 mx-auto">
-        <div class="col-12">
-            <div id='calendar'></div>
+        <div class="row mt-3 mx-auto">
+            <div class="col-12">
+                <div id='calendar'></div>
+            </div>
         </div>
     </div>
 

@@ -12,6 +12,8 @@
             z-index: 100000;
         }
     </style>
+    <title>ADMIN DASHBOARD: CORSI</title>
+
     <!-- EDIT Modal -->
     <div class="modal fade" id="subcategoryEditModal" tabindex="1" aria-labelledby="subcategoryEditModalLabel"
          aria-hidden="true">
@@ -103,7 +105,7 @@
 
     <!-- ADD Modal -->
 
-    <div class="w-100 h-100 p-5">
+    <div class="w-100 h-100 p-3">
         <table id="table" class="w-100 h-100 bg-white"></table>
     </div>
 

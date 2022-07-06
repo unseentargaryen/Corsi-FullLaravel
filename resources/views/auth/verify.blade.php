@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+    <title>I CORSI DELLA TANA: RESET PASSWORD</title>
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8">

@@ -16,6 +16,7 @@
         }
 
     </style>
+    <title>ADMIN DASHBOARD: MODIFICA CORSO</title>
 
     <div class="col px-5">
         <div class="row mb-3">

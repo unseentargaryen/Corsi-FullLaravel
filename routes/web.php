@@ -19,7 +19,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home'); //ha un middleware auth nella classe
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index']); //ha un middleware auth nella classe
+Route::get('/home', function () {
+    return redirect('/');
+}); //l muert di auth scaffold
 
 Auth::routes();
 

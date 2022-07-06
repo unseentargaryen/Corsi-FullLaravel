@@ -72,10 +72,13 @@
         scroll-behavior: smooth;
     }
 }
+html {
+    font-family: 'Source Sans Pro', sans-serif;
+}
 
 body {
     margin: 0;
-    font-family: var(--bs-body-font-family);
+    font-family: 'Source Sans Pro', sans-serif;
     font-size: var(--bs-body-font-size);
     font-weight: var(--bs-body-font-weight);
     line-height: var(--bs-body-line-height);

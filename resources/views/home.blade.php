@@ -1,13 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
+    <title>CORSI DI DETAILING</title>
     <div class="container">
-        <div class="row mt-5 pt-5">
+        <div class="row mt-3">
             <div class="col-12 d-flex justify-content-center">
                 @include('templates/logo')
             </div>
             <div class="col-12 d-flex justify-content-center">
-                <h1>Prenota i tuoi corsi!</h1>
+                <h1 class="fw-bolder">PRENOTA I TUOI CORSI!</h1>
             </div>
             <div class="col-12 col-md-6 d-flex flex-column justify-content-center mt-4 mt-sm-4 mt-md-3">
                 <label id="category-labell">Categorie</label>
@@ -31,12 +32,12 @@
         <div class="col-12 d-flex justify-content-center mt-5">
             <div class="row" id="courses-div">
                 @foreach($courses as $course)
-                    <div class="col-12 col-sm-5 col-md-3 mx-auto my-1" onclick="handleCoverClick({{ $course->id }})">
+                    <div class="col-12 col-sm-5 col-md-4 mx-auto my-1" onclick="handleCoverClick({{ $course->id }})">
                         <div class="d-flex flex-column img-thumbnail m-1">
                             <img src='{{ url("/")."/courses_images/".$course->cover_filename }}'
-                                 class="w-100 img-responsive"/>
+                                 class="w-100  img-responsive" alt="immagine del corso {{ $course->name }}"/>
                             <div class="text-center">
-                                <p class="my-auto">{{$course['name']}}</p>
+                                <h4 class="my-auto">{{$course['name']}}</h4>
                             </div>
                         </div>
                     </div>

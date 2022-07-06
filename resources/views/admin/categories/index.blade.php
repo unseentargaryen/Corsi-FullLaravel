@@ -7,7 +7,7 @@
             integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
             crossorigin="anonymous"></script>
 
-
+    <title>ADMIN DASHBOARD: CATEGORIE</title>
     <!-- EDIT Modal -->
     <div class="modal fade" id="categoryEditModal" tabindex="1" aria-labelledby="categoryEditModalLabel"
          aria-hidden="true">
@@ -74,7 +74,7 @@
 
     <!-- ADD Modal -->
 
-    <div class="w-100 h-100 p-5">
+    <div class="w-100 h-100 p-3">
         <table id="table" class="w-100 h-100 bg-white"></table>
     </div>
 
