@@ -64,3 +64,4 @@ Route::get('/courses/get-images/{course_id}', "App\Http\Controllers\CourseContro
 Route::get('/courses/get-lessons/{course_id}/', "App\Http\Controllers\LessonController@getLessonsByCourse")->name('get-course-lessons');
 
 Route::get('/lessons/all', "App\Http\Controllers\LessonController@all")->name('lessons-all');
+Route::post('/lessons/create', "App\Http\Controllers\LessonController@create")->name('lessons-create');

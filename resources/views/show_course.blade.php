@@ -44,16 +44,14 @@
                         <p id="seatsP"></p>
                     </div>
                 </div>
-                <div class="modal-footer">
-
-                </div>
+                <div class="modal-footer"></div>
             </div>
         </div>
     </div>
 
     <div class="row">
-        <div class="col-10 offset-1 col-md-6 offset-md-3">
-            <h1 class="fw-bold text-uppercase">{{ $course->name }}</h1>
+        <div class="col-12 col-xs-6 mx-auto">
+            <h1 class="fw-bold text-uppercase p-1">{{ $course->name }}</h1>
             <div class="swiper">
                 <div class="swiper-wrapper">
                     @foreach($course->images as $image)
@@ -69,8 +67,8 @@
         </div>
     </div>
     <div class="row mt-3">
-        <div class="col-10 offset-1 col-md-6 offset-md-3">
-            <h3>{{ $course->description }}</h3>
+        <div class="col-12 col-xs-6 mx-auto">
+            <p class="p-1">{{ $course->description }}</p>
         </div>
     </div>
     <div class="row mt-3">
@@ -109,7 +107,7 @@
 
         const openEventModal = (event) => {
             console.log(event.extendedProps)
-            $('#selectedDateStartP').text(moment(event.start).locale("it").format('D MMMM YYYY, h:mm'));
+            $('#selectedDateStartP').text(moment(event.start).locale("it").format('D MMMM YYYY, HH:mm'));
             $('#selectedDateEndP').text(moment(event.end).locale("it").format('HH:mm'));
             $('#seatsP').text(event.extendedProps.seats_available);
             prenotationModal.show();
@@ -124,6 +122,7 @@
                 themeSystem: "bootstrap5",
                 height: "auto",
                 eventDisplay: "auto",
+                firstDay: 1,
                 buttonText: {
                     today: 'OGGI',
                     listMonth: "LISTA MESE",
