@@ -57,8 +57,8 @@
                     <div class="swiper-wrapper">
                         @foreach($course->images as $image)
                             <div class="swiper-slide">
-                                <img src="{{ url("/")."/courses_images/".$image->filename }}" class="img-fluid"
-                                     alt="course image"/>
+                                <img src="{{ url("/")."/courses_images/".$image->filename }}" class="img-fluid mx-auto"
+                                     alt="slide del corso {{ $course->name }}"/>
                             </div>
                         @endforeach
                     </div>

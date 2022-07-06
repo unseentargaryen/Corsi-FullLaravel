@@ -32,12 +32,13 @@
         <div class="col-12 d-flex justify-content-center mt-5">
             <div class="row" id="courses-div">
                 @foreach($courses as $course)
-                    <div class="col-12 col-sm-5 col-md-4 mx-auto my-1" onclick="handleCoverClick({{ $course->id }})">
+                    <div class="col-12 col-sm-5 col-md-4 mx-auto my-1" role="button"
+                         onclick="handleCoverClick({{ $course->id }})">
                         <div class="d-flex flex-column img-thumbnail m-1">
                             <img src='{{ url("/")."/courses_images/".$course->cover_filename }}'
-                                 class="w-100  img-responsive" alt="immagine del corso {{ $course->name }}"/>
+                                 class="w-100 img-responsive" alt="immagine del corso {{ $course->name }}"/>
                             <div class="text-center">
-                                <h4 class="my-auto">{{$course['name']}}</h4>
+                                <h4 class="my-auto">{{$course->name}}</h4>
                             </div>
                         </div>
                     </div>
