@@ -73,7 +73,7 @@
             </div>
         </div>
         <div class="row mt-3 text-end">
-            <h4>Prezzo: {{ $course->price }} €</h4>
+            <h2 class="text-danger fw-bolder">{{ $course->price }}€</h2>
         </div>
 
         <div class="row mt-3 mx-auto">
