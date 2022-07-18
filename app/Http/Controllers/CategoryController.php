@@ -14,7 +14,7 @@ class CategoryController extends Controller
 
     public function all()
     {
-        $categories = Category::all();
+        $categories = Category::where('visible',false);
 
         return response()->json($categories);
     }

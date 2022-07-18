@@ -17,4 +17,12 @@ class Lesson extends Model
     {
         return $this->hasOne(Course::class);
     }
+
+    public function bookings(){
+        return $this->hasMany(Booking::class);
+    }
+
+    public function pendingBookings(){
+        return $this->hasMany(PendingBooking::class);
+    }
 }

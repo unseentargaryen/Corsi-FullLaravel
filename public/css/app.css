@@ -11913,3 +11913,41 @@ textarea.form-control-lg {
 .fa-plus-custom {
     background: url(../public/images/settings-icon.svg);
 }
+
+.paypal-btn{
+    background-color: #ffc439;
+    border: 0;
+    border-radius: 50px;
+    width: 250px;
+    min-width: 200px;
+    max-width: 300px;
+    font-size: 0.5em;
+}
+.paypal-btn:hover{
+    filter: brightness(0.95);
+}
+
+/*questi stili potrebbero creare problemi nel momento in cui si inseriscono piu eventi in contemporanea*/
+.fc-event{
+    height: 40px;
+    width:  40px;
+    border-radius: 50%!important;
+    background-color: var(--bs-primary);
+ }
+@media(max-device-width: 463px) {
+    .fc-event{
+        height: 30px;
+        width:  30px;
+        border-radius: 50%!important;
+        background-color: var(--bs-primary);
+    }
+}
+.fc-daygrid-event-harness{
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.fc-daygrid-event-dot,.fc-event-time{
+    display: none;
+}

@@ -111,7 +111,7 @@
             });
         }
         const courseComponent = (course) => {
-            return ('<div class="col-12 col-sm-5 col-md-4 mx-auto my-1"><div class="d-flex flex-column img-thumbnail m-1"><img src="{{ url("/") }}/courses_images/' + course.cover_filename + '" class="w-100 img-responsive" onclick="handleCoverClick({{ $course->id }})"/> <div class="text-center"> <p class="my-auto">' + course.name + '</p> </div> </div> </div>');
+            return ('<div class="col-12 col-sm-5 col-md-4 mx-auto my-1"><div class="d-flex flex-column img-thumbnail m-1"><img src="{{ url("/") }}/courses_images/' + course.cover_filename + '" class="w-100 img-responsive" onclick="handleCoverClick('+course.id+')"/> <div class="text-center"> <p class="my-auto">' + course.name + '</p> </div> </div> </div>');
         }
     </script>
 @endsection

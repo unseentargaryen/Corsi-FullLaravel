@@ -67,3 +67,7 @@ Route::get('/courses/get-lessons/{course_id}/', "App\Http\Controllers\LessonCont
 
 Route::get('/lessons/all', "App\Http\Controllers\LessonController@all")->name('lessons-all');
 Route::post('/lessons/create', "App\Http\Controllers\LessonController@create")->name('lessons-create');
+
+Route::post('/pay', "App\Http\Controllers\PaymentController@pay")->name('lessons-pay');
+Route::get('/pay/success/{id}', "App\Http\Controllers\PaymentController@success")->name('pending-success');
+Route::get('/pay/cancel/{id}', "App\Http\Controllers\PaymentController@cancel")->name('pending-cancel');

@@ -56,14 +56,20 @@ class LessonController extends Controller
 
     public function getLessonsByCourse(Request $request, $course_id)
     {
-
         $start = $request->start;
         $end = $request->end;
 
-        $lessons = Lesson::where('course_id', $course_id)->whereDate('start', '>=', $start)->whereDate('end', '<=', $end)->get();
+        $lessons = Lesson::where('course_id', $course_id)->whereDate('start', '>=', $start)->whereDate('start', '<=', $end)->whereDate('start', '>', Carbon::now())->get();
+        $_lessons = [];
+        foreach ($lessons as $l) {
+            $l->seats_available = ($l->max_participants - ($l->bookings()->count() + $l->pendingBookings()->count()));
+            $l->bookings = $l->bookings()->count();
+            $l->pendingBookings = $l->pendingBookings()->count();
+            $_lessons[] = $l;
+        }
 
         return response()->json(
-            $lessons
+            $_lessons
         );
     }
 }

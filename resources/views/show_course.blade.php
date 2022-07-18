@@ -7,7 +7,6 @@
             integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
             crossorigin="anonymous"></script>
 
-
     <link
         rel="stylesheet"
         href="https://unpkg.com/swiper@8/swiper-bundle.min.css"
@@ -44,15 +43,41 @@
                         <p id="seatsP"></p>
                     </div>
                 </div>
-                <div class="modal-footer"></div>
+                <div class="modal-footer d-flex justify-content-center">
+                    @auth()
+                        <form action='{{ route('lessons-pay') }}' method="post" id="payment-form">
+                            @csrf
+                            <input type="hidden" id="user_id" name="user_id"
+                                   value="{{ \Illuminate\Support\Facades\Auth::guard()->user()->id }}">
+                            <input type="hidden" id="lesson_id" name="lesson_id">
+                            <input type="hidden" id="amount" name="amount" value="{{ $course->price }}">
+                            <button class="paypal-btn align-items-center p-1">
+                                @include('components/paypalbtn')
+                            </button>
+                        </form>
+                        <p id="noseats-p" class="text-center"></p>
+                    @endauth()
+                    @guest
+                        <button class="paypal-btn opacity-50 align-items-center p-1 fc-not-allowed" disabled>
+                            @include('components/paypalbtn')
+                        </button>
+                        <p><a href="/login">Accedi</a> per prenotare questa data!</p>
+                    @endguest
+                </div>
+
             </div>
         </div>
     </div>
+
 
     <div class="col px-5">
         <div class="row">
             <div class="col-12 col-xs-6 mx-auto">
                 <h1 class="fw-bold text-uppercase p-1">{{ $course->name }}</h1>
+            </div>
+        </div>
+       <div class="row">
+            <div class="col-12 col-xs-6 col-lg-6">
                 <div class="swiper">
                     <div class="swiper-wrapper">
                         @foreach($course->images as $image)
@@ -66,11 +91,12 @@
                     <div class="swiper-button-next"></div>
                 </div>
             </div>
+           <div class="col-12 col-xs-6 col-lg-6 mt-3 mt-md-0">
+               <h3 class="p-1">{{ $course->description }}</h3>
+           </div>
         </div>
         <div class="row mt-3">
-            <div class="col-12 col-xs-6 mx-auto">
-                <h3 class="p-1">{{ $course->description }}</h3>
-            </div>
+
         </div>
         <div class="row mt-3 text-end">
             <h2 class="text-danger fw-bolder">{{ $course->price }}€</h2>
@@ -88,6 +114,8 @@
     <script src="/js/moment.js"></script>
 
     <script>
+        $('#noseats-p').hide();
+
         const swiper = new Swiper('.swiper', {
             speed: 400,
             spaceBetween: 100,
@@ -106,7 +134,17 @@
         })
 
         const openEventModal = (event) => {
-            console.log(event.extendedProps)
+            let noSeatsP = $('#noseats-p');
+            if (event.extendedProps.seats_available === 0) {
+                $('#payment-form').hide();
+                if (event.extendedProps.pendingBookings > 0) {
+                    noSeatsP.text("Sono in corso le prenotazioni per gli ultimi posti disponibili. Riprova più tardi o seleziona un'altra data.");
+                }else{
+                    noSeatsP.text("Siamo spiacenti,non ci sono posti disponibili per questo corso. Seleziona un'altra data.");
+                }
+                noSeatsP.show();
+            }
+            $('#lesson_id').val(event.id);
             $('#selectedDateStartP').text(moment(event.start).locale("it").format('D MMMM YYYY, HH:mm'));
             $('#selectedDateEndP').text(moment(event.end).locale("it").format('HH:mm'));
             $('#seatsP').text(event.extendedProps.seats_available);
@@ -121,16 +159,15 @@
                 locale: "it-IT",
                 themeSystem: "bootstrap5",
                 height: "auto",
+                eventMinHeight: 150,
                 eventDisplay: "auto",
                 firstDay: 1,
+                minDate: 'today',
                 buttonText: {
                     today: 'OGGI',
                     listMonth: "LISTA MESE",
                     dayGridMonth: "GRIGLIA MESE"
                 },
-
-                eventColor: '#378006',
-                eventBackgroundColor: '#378006',
 
                 eventClick: function (info) {
                     openEventModal(info.event);
@@ -140,4 +177,34 @@
         });
 
     </script>
+
+    {{--    <script>--}}
+    {{--        paypal.Buttons({--}}
+    {{--            // Sets up the transaction when a payment button is clicked--}}
+    {{--            createOrder: (data, actions) => {--}}
+    {{--                console.log(data)--}}
+    {{--                console.log(actions)--}}
+    {{--                return actions.order.create({--}}
+    {{--                    purchase_units: [{--}}
+    {{--                        amount: {--}}
+    {{--                            value: '77.44' // Can also reference a variable or function--}}
+    {{--                        }--}}
+    {{--                    }]--}}
+    {{--                });--}}
+    {{--            },--}}
+    {{--            // Finalize the transaction after payer approval--}}
+    {{--            onApprove: (data, actions) => {--}}
+    {{--                return actions.order.capture().then(function(orderData) {--}}
+    {{--                    // Successful capture! For dev/demo purposes:--}}
+    {{--                    console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));--}}
+    {{--                    const transaction = orderData.purchase_units[0].payments.captures[0];--}}
+    {{--                    alert(`Transaction ${transaction.status}: ${transaction.id}\n\nSee console for all available details`);--}}
+    {{--                    // When ready to go live, remove the alert and show a success message within this page. For example:--}}
+    {{--                    // const element = document.getElementById('paypal-button-container');--}}
+    {{--                    // element.innerHTML = '<h3>Thank you for your payment!</h3>';--}}
+    {{--                    // Or go to another URL:  actions.redirect('thank_you.html');--}}
+    {{--                });--}}
+    {{--            }--}}
+    {{--        }).render('#paypal-button-container');--}}
+    {{--    </script>--}}
 @endsection

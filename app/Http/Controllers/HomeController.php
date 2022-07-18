@@ -26,9 +26,21 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $categories = Category::all();
-        $subcategories = Subcategory::all();
-        $courses = Course::all();
+        $categories = Category::where('visible', '=', 1)->get();
+        $subcategories = [];
+        $courses = [];
+        foreach ($categories as $category) {
+            foreach ($category->subcategories()->get() as $subcategory) {
+                if ($subcategory->visible) {
+                    $subcategories [] = $subcategory;
+                    foreach ($subcategory->courses()->get() as $course) {
+                        if ($course->visible) {
+                            $courses  [] = $course;
+                        }
+                    }
+                }
+            }
+        }
 
         return view('home', ['categories' => $categories, 'subcategories' => $subcategories, 'courses' => $courses]);
     }
