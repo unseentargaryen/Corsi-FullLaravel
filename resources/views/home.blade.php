@@ -1,10 +1,14 @@
 @extends('layouts.app')
-
+<link
+    rel="stylesheet"
+    href="https://unpkg.com/swiper@8/swiper-bundle.min.css"
+/>
+<script src="https://unpkg.com/swiper@8/swiper-bundle.min.js"></script>
 @section('content')
     <title>CORSI DI DETAILING</title>
     <div class="container">
         <div class="row mt-3">
-            <div class="col-12 d-flex justify-content-center">
+            <div class="col-12 col-md-6 offset-md-3 d-flex justify-content-center">
                 @include('templates/logo')
             </div>
             <div class="col-12 d-flex justify-content-center">
@@ -29,7 +33,7 @@
                 </select>
             </div>
         </div>
-        <div class="col-12 d-flex justify-content-center mt-5">
+        <div class="d-md-none col-12 d-flex justify-content-center mt-5">
             <div class="row" id="courses-div">
                 @foreach($courses as $course)
                     <div class="col-12 col-sm-5 col-md-4 mx-auto my-1" role="button"
@@ -37,21 +41,35 @@
                         <div class="d-flex flex-column img-thumbnail m-1">
                             <img src='{{ url("/")."/courses_images/".$course->cover_filename }}'
                                  class="w-100 img-responsive" alt="immagine del corso {{ $course->name }}"/>
-                            <div class="text-center">
-                                <h4 class="my-auto">{{$course->name}}</h4>
-                            </div>
                         </div>
                     </div>
                 @endforeach
             </div>
         </div>
+        <div class="d-none d-md-block col-12 mt-5">
+            <div class="row" id="courses-div">
+                <div class="swiper mySwiper">
+                    <div class="swiper-wrapper">
+                        @foreach($courses as $course)
+                            <div class="swiper-slide" onclick="handleCoverClick({{ $course->id }})">
+                                <img src='{{ url("/")."/courses_images/".$course->cover_filename }}'
+                                     class="w-100 img-responsive" alt="immagine del corso {{ $course->name }}"/>
+                            </div>
+                        @endforeach
+                    </div>
+                    <div class="swiper-pagination"></div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
-        let categorySelect = $('#category-select');
-        let subcategorySelect = $('#subcategory-select');
+        initSwiper();
+        let sliderWrapper = $('.swiper-wrapper');
         let coursesDiv = $('#courses-div');
 
+        let categorySelect = $('#category-select');
+        let subcategorySelect = $('#subcategory-select');
 
         let categories = {{ Js::from($categories) }};
         let subcategories = {{ Js::from($subcategories) }};
@@ -72,6 +90,7 @@
 
         subcategorySelect.on('change', function (e) {
             selected_subcat = parseInt(e.target.value);
+            mobileFilterCourses();
             filterCourses();
         });
 
@@ -98,20 +117,45 @@
 
         const filterCourses = () => {
             courses_displayed = courses.filter(course => parseInt(course.subcategory_id) === selected_subcat);
+            sliderWrapper.empty();
+            courses_displayed.map((course) => {
+                sliderWrapper.append(mobileCourseComponent(course))
+            });
+        }
+
+        const mobileFilterCourses = () => {
+            courses_displayed = courses.filter(course => parseInt(course.subcategory_id) === selected_subcat);
             coursesDiv.empty();
             courses_displayed.map((course) => {
                 coursesDiv.append(courseComponent(course))
             });
+            initSwiper();
         }
 
         const resetWithAllCourses = () => {
-            coursesDiv.empty();
+            sliderWrapper.empty();
             courses.map((course) => {
-                coursesDiv.append(courseComponent(course))
+                sliderWrapper.append(courseComponent(course))
             });
         }
+
         const courseComponent = (course) => {
-            return ('<div class="col-12 col-sm-5 col-md-4 mx-auto my-1"><div class="d-flex flex-column img-thumbnail m-1"><img src="{{ url("/") }}/courses_images/' + course.cover_filename + '" class="w-100 img-responsive" onclick="handleCoverClick('+course.id+')"/> <div class="text-center"> <p class="my-auto">' + course.name + '</p> </div> </div> </div>');
+            return ('<div class="swiper-slide" onclick="handleCoverClick(' + course.id + ')"><img src="{{ url("/") }}/courses_images/' + course.cover_filename + '" class="w-100 img-responsive"/></div>');
+        }
+
+        const mobileCourseComponent = (course) => {
+            return ('<div class="col-12 col-sm-5 mx-auto my-1"><div class="d-flex flex-column img-thumbnail m-1"><img src="{{ url("/") }}/courses_images/' + course.cover_filename + '" class="w-100 img-responsive" onclick="handleCoverClick(' + course.id + ')"/> </div> </div>');
+        }
+
+        function initSwiper() {
+            var swiper = new Swiper(".mySwiper", {
+                slidesPerView: 3,
+                spaceBetween: 30,
+                pagination: {
+                    el: ".swiper-pagination",
+                    clickable: true,
+                },
+            });
         }
     </script>
 @endsection

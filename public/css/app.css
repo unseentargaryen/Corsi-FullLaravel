@@ -1,5 +1,4 @@
-@import url(https://fonts.googleapis.com/css?family=Nunito);
-
+@import url('https://fonts.googleapis.com/css2?family=Roboto&family=Source+Sans+Pro:wght@200;700&display=swap');
 @charset "UTF-8";
 /*!
  * Bootstrap v5.1.3 (https://getbootstrap.com/)
@@ -72,13 +71,14 @@
         scroll-behavior: smooth;
     }
 }
+
 html {
     font-family: 'Source Sans Pro', sans-serif;
 }
 
 body {
     margin: 0;
-    font-family: 'Source Sans Pro', sans-serif;
+    font-family: 'Roboto', sans-serif;
     font-size: var(--bs-body-font-size);
     font-weight: var(--bs-body-font-weight);
     line-height: var(--bs-body-line-height);
@@ -11914,7 +11914,7 @@ textarea.form-control-lg {
     background: url(../public/images/settings-icon.svg);
 }
 
-.paypal-btn{
+.paypal-btn {
     background-color: #ffc439;
     border: 0;
     border-radius: 50px;
@@ -11923,31 +11923,34 @@ textarea.form-control-lg {
     max-width: 300px;
     font-size: 0.5em;
 }
-.paypal-btn:hover{
+
+.paypal-btn:hover {
     filter: brightness(0.95);
 }
 
 /*questi stili potrebbero creare problemi nel momento in cui si inseriscono piu eventi in contemporanea*/
-.fc-event{
+.fc-event {
     height: 40px;
-    width:  40px;
-    border-radius: 50%!important;
+    width: 40px;
+    border-radius: 50% !important;
     background-color: var(--bs-primary);
- }
-@media(max-device-width: 463px) {
-    .fc-event{
+}
+
+@media (max-device-width: 463px) {
+    .fc-event {
         height: 30px;
-        width:  30px;
-        border-radius: 50%!important;
+        width: 30px;
+        border-radius: 50% !important;
         background-color: var(--bs-primary);
     }
 }
-.fc-daygrid-event-harness{
+
+.fc-daygrid-event-harness {
     align-items: center;
     display: flex;
     flex-direction: column;
 }
 
-.fc-daygrid-event-dot,.fc-event-time{
+.fc-daygrid-event-dot, .fc-event-time {
     display: none;
 }

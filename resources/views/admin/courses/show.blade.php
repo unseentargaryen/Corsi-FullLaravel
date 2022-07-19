@@ -117,6 +117,13 @@
                         </div>
                     </div>
                     <div class="row mt-3">
+                        <div class="col-12">
+                            <label for="sede"> Sede del corso:</label>
+                            <input type="text" id="sede" name="sede" value="{{$course->sede}}"
+                                   class="form form-control">
+                        </div>
+                    </div>
+                    <div class="row mt-3">
                         <div class="alert alert-success" role="alert" id="submitLessonSuccessAlert">
                             Lezione aggiunta correttamente
                         </div>
@@ -176,6 +183,7 @@
                 dates: $("#dates").val(),
                 startTime: $("#startTime").val(),
                 endTime: $("#endTime").val(),
+                sede: $("#sede").val(),
             }
             axios.post('{{ route('lessons-create')}}', payload).then((res) => {
                 if (res.status === 200) {

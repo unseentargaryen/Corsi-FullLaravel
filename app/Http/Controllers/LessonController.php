@@ -22,16 +22,22 @@ class LessonController extends Controller
 
     public function create(Request $request)
     {
-
-        Log::info($request);
-
         $course_id = $request->course_id;
         $max_participants = $request->max_participants;
         $dates = $request->dates;
         $startTime = $request->startTime;
         $endTime = $request->endTime;
+        $sede = $request->sede;
+
+        Log::info($dates);
+        if ($dates === '') {
+            return response()->json(
+                ['status' => 500]
+            );
+        }
 
         $dates = explode(",", $dates);
+
         try {
             foreach ($dates as $d) {
                 $lesson = new Lesson();
@@ -40,6 +46,7 @@ class LessonController extends Controller
                 $lesson->seats_available = $max_participants;
                 $lesson->start = Carbon::createFromDate(trim($d) . " " . $startTime);
                 $lesson->end = Carbon::createFromDate(trim($d) . " " . $endTime);
+                $lesson->sede = $sede;
 
                 $lesson->save();
             }
