@@ -42,7 +42,7 @@
                         <label style="margin-right:5px" class="fw-bold">Posti disponibili:</label>
                         <p id="seatsP"></p>
                     </div>
-                    <div class="d-flex flex-row">
+                    <div class="d-flex flex-row mt-1">
                         <label style="margin-right:5px" class="fw-bold">Sede del Corso:</label>
                         <p id="sedeP"></p>
                     </div>
@@ -81,7 +81,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-12">
+            <div class="col-12 col-xs-6 col-lg-6">
                 <div class="swiper">
                     <div class="swiper-wrapper">
                         @foreach($course->images as $image)
@@ -140,7 +140,7 @@
                 $('#payment-form').hide();
                 if (event.extendedProps.pendingBookings > 0) {
                     noSeatsP.text("Sono in corso le prenotazioni per gli ultimi posti disponibili. Riprova più tardi o seleziona un'altra data.");
-                } else {
+                }else{
                     noSeatsP.text("Siamo spiacenti,non ci sono posti disponibili per questo corso. Seleziona un'altra data.");
                 }
                 noSeatsP.show();
