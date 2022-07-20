@@ -44,8 +44,8 @@ class LessonController extends Controller
                 $lesson->course_id = $course_id;
                 $lesson->max_participants = $max_participants;
                 $lesson->seats_available = $max_participants;
-                $lesson->start = Carbon::createFromDate(trim($d) . " " . $startTime);
-                $lesson->end = Carbon::createFromDate(trim($d) . " " . $endTime);
+                $lesson->start = Carbon::create(trim($d) . " " . $startTime);
+                $lesson->end = Carbon::create(trim($d) . " " . $endTime);
                 $lesson->sede = $sede;
 
                 $lesson->save();
@@ -66,7 +66,7 @@ class LessonController extends Controller
         $start = $request->start;
         $end = $request->end;
 
-        $lessons = Lesson::where('course_id', $course_id)->whereDate('start', '>=', Carbon::create($end))->get();
+        $lessons = Lesson::where('course_id', $course_id)->whereDate('start', '>=', Carbon::create($start))->whereDate('start', '<=', Carbon::create($end))->get();
         $_lessons = [];
         foreach ($lessons as $l) {
             $l->seats_available = ($l->max_participants - ($l->bookings()->count() + $l->pendingBookings()->count()));
