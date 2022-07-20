@@ -54,7 +54,7 @@
                 <div class="modal-body">
                     <div class="w-100">
                         <label>Nome Categoria</label>
-                        <input id="add-name-input" name="name" class="form form-control">
+                        <input id="name" name="name" class="form form-control">
                     </div>
                     <div class="mt-3 alert d-flex flex-row align-items-center justify-content-between" role="alert"
                          id="add-alert">
@@ -139,7 +139,7 @@
             });
         }
 
-        let addNameInput = $('#add-name-input');
+        let addNameInput = $('#name');
         let addAlert = $('#add-alert');
         let addAlertP = $('#add-alert-p');
         let addAlertSpinner = $('#add-alert-spinner');
