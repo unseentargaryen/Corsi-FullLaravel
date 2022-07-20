@@ -66,7 +66,7 @@ class LessonController extends Controller
         $start = $request->start;
         $end = $request->end;
 
-        $lessons = Lesson::where('course_id', $course_id)->whereDate('start', '>=', $start)->whereDate('start', '<=', $end)->get();
+        $lessons = Lesson::where('course_id', $course_id)->get();
         $_lessons = [];
         foreach ($lessons as $l) {
             $l->seats_available = ($l->max_participants - ($l->bookings()->count() + $l->pendingBookings()->count()));
