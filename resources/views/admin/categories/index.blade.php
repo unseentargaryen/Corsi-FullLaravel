@@ -54,6 +54,7 @@
                 <div class="modal-body">
                     <div class="w-100">
                         <label>Nome Categoria</label>
+                        @csrf
                         <input id="name" name="name" class="form form-control">
                     </div>
                     <div class="mt-3 alert d-flex flex-row align-items-center justify-content-between" role="alert"
@@ -146,15 +147,10 @@
         addAlertSpinner.hide();
 
         const handleAddSubmit = () => {
-            axios('{{ route('categories-create') }}', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                },
-                data: JSON.stringify({
+            axios.post('{{ route('categories-create') }}',
+                {
                     name: addNameInput.val(),
-                })
-            }).then((res) => {
+                }).then((res) => {
                 console.log(res)
                 if (res.status === 200) {
                     if (res.data.success === true) {
