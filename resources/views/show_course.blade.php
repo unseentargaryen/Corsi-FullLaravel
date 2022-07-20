@@ -164,7 +164,7 @@
                 eventMinHeight: 150,
                 eventDisplay: "auto",
                 firstDay: 1,
-                minDate: 'today',
+                startDate: 'today',
                 buttonText: {
                     today: 'OGGI',
                     listMonth: "LISTA MESE",
