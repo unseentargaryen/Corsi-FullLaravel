@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Lesson;
 use Carbon\Carbon;
-use DateTime;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -66,9 +65,7 @@ class LessonController extends Controller
     {
         $start = $request->start;
         $end = $request->end;
-        if ($start <= Carbon::now()){
-            $start = Carbon::tomorrow();
-        }
+
         $lessons = Lesson::where('course_id', $course_id)->whereDate('start', '>=', $start)->whereDate('start', '<=', $end)->get();
         $_lessons = [];
         foreach ($lessons as $l) {
