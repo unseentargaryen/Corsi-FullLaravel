@@ -6,6 +6,7 @@ use App\Models\Lesson;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class LessonController extends Controller
@@ -72,7 +73,15 @@ class LessonController extends Controller
             $l->seats_available = ($l->max_participants - ($l->bookings()->count() + $l->pendingBookings()->count()));
             $l->bookings = $l->bookings()->count();
             $l->pendingBookings = $l->pendingBookings()->count();
-            $_lessons[] = $l;
+            foreach ($l->pendingBookings()->get() as $_pendingBooking){
+                if ($_pendingBooking->user()->first()->id === Auth::user()->id) {
+                    $l->hasPending = true;
+                    $l->classNames = [ 'fc-event-pending' ];
+                }
+            }
+            if ($l->bookings < 4 || $l->hasPending){
+                $_lessons[] = $l;
+            }
         }
 
         return response()->json(

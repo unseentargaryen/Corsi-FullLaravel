@@ -11935,6 +11935,9 @@ textarea.form-control-lg {
     border-radius: 50% !important;
     background-color: var(--bs-primary);
 }
+.fc-event-pending {
+    background-color: var(--bs-warning);
+}
 
 @media (max-device-width: 463px) {
     .fc-event {
@@ -11942,6 +11945,9 @@ textarea.form-control-lg {
         width: 30px;
         border-radius: 50% !important;
         background-color: var(--bs-primary);
+    }
+    .fc-event-pending {
+        background-color: var(--bs-warning);
     }
 }
 
@@ -11953,4 +11959,13 @@ textarea.form-control-lg {
 
 .fc-daygrid-event-dot, .fc-event-time {
     display: none;
+}
+
+.fc-header-toolbar {
+    display: flex;
+    flex-direction: column;
+}
+
+.fc-toolbar-title{
+    margin-bottom:10%!important;
 }

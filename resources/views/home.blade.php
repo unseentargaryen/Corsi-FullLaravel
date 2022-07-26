@@ -38,7 +38,7 @@
                 @foreach($courses as $course)
                     <div class="col-12 col-sm-5 col-md-4 mx-auto my-1" role="button"
                          onclick="handleCoverClick({{ $course->id }})">
-                        <div class="d-flex flex-column img-thumbnail m-1">
+                        <div class="d-flex flex-column  m-1">
                             <img src='{{ url("/")."/courses_images/".$course->cover_filename }}'
                                  class="w-100 img-responsive" alt="immagine del corso {{ $course->name }}"/>
                         </div>
@@ -144,7 +144,7 @@
         }
 
         const mobileCourseComponent = (course) => {
-            return ('<div class="col-12 col-sm-5 mx-auto my-1"><div class="d-flex flex-column img-thumbnail m-1"><img src="{{ url("/") }}/courses_images/' + course.cover_filename + '" class="w-100 img-responsive" onclick="handleCoverClick(' + course.id + ')"/> </div> </div>');
+            return ('<div class="col-12 col-sm-5 mx-auto my-1"><div class="d-flex flex-column  m-1"><img src="{{ url("/") }}/courses_images/' + course.cover_filename + '" class="w-100 img-responsive" onclick="handleCoverClick(' + course.id + ')"/> </div> </div>');
         }
 
         function initSwiper() {

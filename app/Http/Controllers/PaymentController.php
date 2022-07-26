@@ -10,6 +10,7 @@ use App\Models\PendingBooking;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Log;
 use Omnipay\Omnipay;
 
@@ -45,25 +46,36 @@ class PaymentController extends Controller
             dd("fail");
         }
 
-        Log::info($lesson->bookings()->count());
-        Log::info($lesson->pendingBookings()->count());
-        if (($lesson->bookings()->count() + $lesson->pendingBookings()->count()) >= $lesson->max_participants) {
-           dd('-cancel');
+        $pendingBooking = null;
+        foreach ($lesson->pendingBookings()->get() as $_pendingBooking){
+            if ($_pendingBooking->user()->first()->id === $user_id) {
+                $pendingBooking = $_pendingBooking;
+            }
         }
 
-        $pendingBooking = new PendingBooking();
-        $pendingBooking->user_id = $user_id;
-        $pendingBooking->lesson_id = $lesson_id;
-        $pendingBooking->amount = $amount;
+        if (!$pendingBooking){
+            if (($lesson->bookings()->count() + $lesson->pendingBookings()->count()) >= $lesson->max_participants) {
+                return redirect()->route('courses-show', ['id' => $lesson->course_id])->withCookie(cookie(
+                    'no_seats',
+                    "true",
+                    1,
+                ));
+            }
 
-        $pendingBooking->save();
+            $pendingBooking = new PendingBooking();
+            $pendingBooking->user_id = $user_id;
+            $pendingBooking->lesson_id = $lesson_id;
+            $pendingBooking->amount = $amount;
+
+            $pendingBooking->save();
+        }
 
         try {
             $response = $this->gateway->purchase([
                 'amount' => $request->amount,
                 'currency' => 'EUR',
                 'returnUrl' => route('pending-success', ['id' => $pendingBooking->id]),
-                'cancelUrl' => route('pending-cancel', ['id' => $pendingBooking->id]),
+                'cancelUrl' => route('pending-cancel', ['id' =>  $pendingBooking->id]) ,
             ])->send();
 
             if ($response->isRedirect()) {
@@ -135,7 +147,9 @@ class PaymentController extends Controller
     {
         $pendingBooking = PendingBooking::find($id);
         if ($pendingBooking) {
+            $course_id = $pendingBooking->lesson()->first()->course()->first()->id;
             PendingBooking::destroy($id);
+            return redirect()->route('courses-show',['id'=> $course_id]);
         }
 
         return redirect()->route('home');

@@ -1,20 +1,19 @@
 @extends('layouts.app')
 @section('content')
-
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link href="{{ asset('css/font-awesome.min.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
             crossorigin="anonymous"></script>
-
     <link
         rel="stylesheet"
         href="https://unpkg.com/swiper@8/swiper-bundle.min.css"
     />
     <script src="https://unpkg.com/swiper@8/swiper-bundle.min.js"></script>
-
     <link href='/plugins/fullcalendar/main.css' rel='stylesheet'/>
     <script src='/plugins/fullcalendar/main.js'></script>
+
     <title>CORSO DI DETAILING: {{ $course->name}}</title>
     <div class="modal fade" id="prenotationModal" tabindex="1" aria-labelledby="prenotationModalLabel"
          aria-hidden="true">
@@ -46,6 +45,7 @@
                         <label style="margin-right:5px" class="fw-bold">Sede del Corso:</label>
                         <p id="sedeP"></p>
                     </div>
+
                 </div>
                 <div class="modal-footer d-flex justify-content-center">
                     @auth()
@@ -68,11 +68,9 @@
                         <p><a href="/login">Accedi</a> per prenotare questa data!</p>
                     @endguest
                 </div>
-
             </div>
         </div>
     </div>
-
 
     <div class="col px-5">
         <div class="row">
@@ -84,12 +82,18 @@
             <div class="col-12 col-xs-6 col-lg-6">
                 <div class="swiper">
                     <div class="swiper-wrapper">
-                        @foreach($course->images as $image)
+                        @if($course->images->count() > 0)
+                            @foreach($course->images as $image)
+                                <div class="swiper-slide">
+                                    <img src="{{ url("/")."/courses_images/".$image->filename }}" class="img-fluid"
+                                         alt="slide del corso {{ $course->name }}"/>
+                                </div>
+                            @endforeach
+                        @else
                             <div class="swiper-slide">
-                                <img src="{{ url("/")."/courses_images/".$image->filename }}" class="img-fluid"
-                                     alt="slide del corso {{ $course->name }}"/>
+                                <a href="https://placeholder.com"><img src="https://via.placeholder.com/300"></a>
                             </div>
-                        @endforeach
+                        @endif
                     </div>
                     <div class="swiper-button-prev"></div>
                     <div class="swiper-button-next"></div>
@@ -113,6 +117,17 @@
         </div>
     </div>
 
+    @if(Cookie::get('no_seats') === 'true')
+        <script>
+            Swal.fire({
+                title: 'Errore!',
+                icon: 'error',
+                confirmButtonText: 'Chiudi',
+                html: 'Non ci sono posti per questa data!<br>Seleziona un\'altra data.',
+            });
+        </script>
+    @endif
+
     <script src="/js/moment.js"></script>
     <script>
         $('#noseats-p').hide();
@@ -135,16 +150,16 @@
         })
 
         const openEventModal = (event) => {
-            let noSeatsP = $('#noseats-p');
-            if (event.extendedProps.seats_available === 0) {
-                $('#payment-form').hide();
-                if (event.extendedProps.pendingBookings > 0) {
-                    noSeatsP.text("Sono in corso le prenotazioni per gli ultimi posti disponibili. Riprova più tardi o seleziona un'altra data.");
-                }else{
-                    noSeatsP.text("Siamo spiacenti,non ci sono posti disponibili per questo corso. Seleziona un'altra data.");
-                }
-                noSeatsP.show();
-            }
+            // let noSeatsP = $('#noseats-p');
+            // if (event.extendedProps.seats_available === 0) {
+            //     $('#payment-form').hide();
+            //     if (event.extendedProps.pendingBookings > 0) {
+            //         noSeatsP.text("Sono in corso le prenotazioni per gli ultimi posti disponibili. Riprova più tardi o seleziona un'altra data.");
+            //     }else{
+            //         noSeatsP.text("Siamo spiacenti,non ci sono posti disponibili per questo corso. Seleziona un'altra data.");
+            //     }
+            //     noSeatsP.show();
+            // }
             $('#lesson_id').val(event.id);
             $('#selectedDateStartP').text(moment(event.start).locale("it").format('D MMMM YYYY, HH:mm'));
             $('#selectedDateEndP').text(moment(event.end).locale("it").format('HH:mm'));
@@ -166,11 +181,10 @@
                 firstDay: 1,
                 startDate: 'today',
                 buttonText: {
-                    today: 'OGGI',
+                    today: 'VAI AD OGGI',
                     listMonth: "LISTA MESE",
-                    dayGridMonth: "GRIGLIA MESE"
+                    dayGridMonth: "VISUALIZZAZIONE MENSILE",
                 },
-
                 eventClick: function (info) {
                     openEventModal(info.event);
                 }
