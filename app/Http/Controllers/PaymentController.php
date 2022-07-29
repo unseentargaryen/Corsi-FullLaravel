@@ -11,7 +11,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Omnipay\Omnipay;
-use Symfony\Component\Console\Input\Input;
 
 class PaymentController extends Controller
 {
@@ -101,7 +100,7 @@ class PaymentController extends Controller
             dd("fail");
         }
 
-        if (Input::get('PayerID') && Input::get('paymentId')) {
+        if (Request::get('PayerID') && Request::get('paymentId')) {
             $transaction = $this->gateway->completePurchase(array(
                 'payer_id' => $request->input('PayerID'),
                 'transactionReference' => $request->input('paymentId')
@@ -146,7 +145,7 @@ class PaymentController extends Controller
             }
         } else {
             Log::info($request);
-            return Input::get('PayerID') . Input::get('paymentId');
+            return $request->query->all();
         }
     }
 
