@@ -99,7 +99,7 @@ class PaymentController extends Controller
             dd("fail");
         }
 
-        if ($request->input('paymentId') && $request->input('PayerID')) {
+        if ($request->paymentId && $request->PayerID) {
             $transaction = $this->gateway->completePurchase(array(
                 'payer_id' => $request->input('PayerID'),
                 'transactionReference' => $request->input('paymentId')
@@ -143,7 +143,7 @@ class PaymentController extends Controller
                 return $response->getMessage();
             }
         } else {
-            return 'Payment declined!!';
+            return 'Payment declined!! ' . $request->paymentId . " ----" . $request->PayerID;
         }
     }
 
