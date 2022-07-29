@@ -79,7 +79,7 @@ class PaymentController extends Controller
             ])->send();
 
             if ($response->isRedirect()) {
-                $response->redirect();
+                return $response->redirect();
             } else {
                 return $response->getMessage();
             }
@@ -99,7 +99,8 @@ class PaymentController extends Controller
         if (!$pendingBooking) {
             dd("fail");
         }
-dd($_GET);
+
+        dd($request);
         if ($request->query('PayerID') && $request->query('paymentId')) {
             $transaction = $this->gateway->completePurchase(array(
                 'payer_id' => $request->input('PayerID'),
