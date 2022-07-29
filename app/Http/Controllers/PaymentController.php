@@ -100,8 +100,25 @@ class PaymentController extends Controller
             dd("fail");
         }
 
-        dd($request);
-        if ($request->query('PayerID') && $request->query('paymentId')) {
+        $payment_id = null;
+        $payer_id = null;
+
+        if ($request->input('PayerID') && $request->input('paymentId')) {
+            $payment_id = $request->input('PayerID');
+            $payer_id = $request->input('paymentId');
+        } else {
+            $queryString = explode("?", $request->getRequestUri())[1];
+            $params = explode("&", $queryString);
+            $inputs = [];
+            foreach ($params as $param) {
+                $temp = explode('=', $param);
+                $inputs[$temp[0]] = $temp[1];
+            }
+            $payer_id = $inputs['PayerId'];
+            $payment_id = $inputs['PaymentId'];
+        }
+
+        if ($payment_id && $payer_id) {
             $transaction = $this->gateway->completePurchase(array(
                 'payer_id' => $request->input('PayerID'),
                 'transactionReference' => $request->input('paymentId')
