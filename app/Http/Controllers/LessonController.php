@@ -62,6 +62,30 @@ class LessonController extends Controller
         );
     }
 
+    public function edit(Request $request)
+    {
+
+        $lesson = Lesson::findOrFail($request->id);
+
+        try {
+            $lesson->max_participants = $request->max_participants;
+            $lesson->start = Carbon::create($request->start);
+            $lesson->end = Carbon::create($request->end);
+            $lesson->sede = $request->sede;
+            $lesson->visible = $request->visible;
+
+            $lesson->save();
+        } catch (Exception $e) {
+            return response()->json(
+                ['status' => 500, 'message' => $e->getMessage()]
+            );
+        }
+
+        return response()->json(
+            ['status' => 200]
+        );
+    }
+
     public function getLessonsByCourse(Request $request, $course_id)
     {
         $start = $request->start;
@@ -73,13 +97,13 @@ class LessonController extends Controller
             $l->seats_available = ($l->max_participants - ($l->bookings()->count() + $l->pendingBookings()->count()));
             $l->bookings = $l->bookings()->count();
             $l->pendingBookings = $l->pendingBookings()->count();
-            foreach ($l->pendingBookings()->get() as $_pendingBooking){
+            foreach ($l->pendingBookings()->get() as $_pendingBooking) {
                 if ($_pendingBooking->user()->first()->id === Auth::user()->id) {
                     $l->hasPending = true;
-                    $l->classNames = [ 'fc-event-pending' ];
+                    $l->classNames = ['fc-event-pending'];
                 }
             }
-            if ($l->bookings < 4 || $l->hasPending){
+            if ($l->bookings < 4 || $l->hasPending) {
                 $_lessons[] = $l;
             }
         }
@@ -88,4 +112,5 @@ class LessonController extends Controller
             $_lessons
         );
     }
+
 }

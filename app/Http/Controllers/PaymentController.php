@@ -28,7 +28,6 @@ class PaymentController extends Controller
 
     public function pay(Request $request)
     {
-
         $this->validate($request, [
             'lesson_id' => 'integer|required',
             'user_id' => 'integer',
@@ -37,23 +36,26 @@ class PaymentController extends Controller
         $amount = $request->amount;
 
         $user_id = Auth::guard()->user()->id ?? $request->user_id ?? null;
-        if (!$user_id) {
-            dd("fail");
-        }
+
         $lesson_id = $request->lesson_id;
         $lesson = Lesson::find($lesson_id);
-        if (!$lesson) {
-            dd("fail");
+
+        if (!$lesson || !$user_id) {
+            return redirect()->route('courses-show', ['id' => $lesson->course_id])->withCookie(cookie(
+                'general_error',
+                "true",
+                1,
+            ));
         }
 
         $pendingBooking = null;
-        foreach ($lesson->pendingBookings()->get() as $_pendingBooking){
+        foreach ($lesson->pendingBookings()->get() as $_pendingBooking) {
             if ($_pendingBooking->user()->first()->id === $user_id) {
                 $pendingBooking = $_pendingBooking;
             }
         }
 
-        if (!$pendingBooking){
+        if (!$pendingBooking) {
             if (($lesson->bookings()->count() + $lesson->pendingBookings()->count()) >= $lesson->max_participants) {
                 return redirect()->route('courses-show', ['id' => $lesson->course_id])->withCookie(cookie(
                     'no_seats',
@@ -75,7 +77,7 @@ class PaymentController extends Controller
                 'amount' => $request->amount,
                 'currency' => 'EUR',
                 'returnUrl' => route('pending-success', ['id' => $pendingBooking->id]),
-                'cancelUrl' => route('pending-cancel', ['id' =>  $pendingBooking->id]) ,
+                'cancelUrl' => route('pending-cancel', ['id' => $pendingBooking->id]),
             ])->send();
 
             if ($response->isRedirect()) {
@@ -109,6 +111,7 @@ class PaymentController extends Controller
             $response = $transaction->send();
 
             if ($response->isSuccessful()) {
+                $course_id = $pendingBooking->lesson()->first()->course()->first()->id;
 
                 $arr = $response->getData();
 
@@ -133,8 +136,12 @@ class PaymentController extends Controller
                 $payment->save();
                 PendingBooking::destroy($pendingBooking->id);
 
-                return ("Payment is Successfull. Your Transaction Id is : " . $arr['id']);
-
+//                return ("Payment is Successfull. Your Transaction Id is : " . $arr['id']);
+                return redirect()->route('courses-show', ['id' => $course_id])->withCookie(cookie(
+                    'purchase_complete',
+                    "true",
+                    1,
+                ));
             } else {
                 return $response->getMessage();
             }
@@ -149,7 +156,11 @@ class PaymentController extends Controller
         if ($pendingBooking) {
             $course_id = $pendingBooking->lesson()->first()->course()->first()->id;
             PendingBooking::destroy($id);
-            return redirect()->route('courses-show',['id'=> $course_id]);
+            return redirect()->route('courses-show', ['id' => $course_id])->withCookie(cookie(
+                'purchase_cancelled',
+                "true",
+                1,
+            ));
         }
 
         return redirect()->route('home');

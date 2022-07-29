@@ -9,6 +9,7 @@ use App\Models\Subcategory;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 
 class CourseController extends Controller
 {
@@ -58,9 +59,9 @@ class CourseController extends Controller
                 'message' => 'Course not found '
             ], 404);
         }
+        $lessons = $course->lessons()->get();
 
-        return view('admin.courses.show', ['course' => $course, 'subcategories' => $subcategories]);
-
+        return view('admin.courses.show', ['course' => $course, 'subcategories' => $subcategories,'lessons' => $lessons]);
     }
 
     public function get($id)
@@ -100,12 +101,13 @@ class CourseController extends Controller
 
     public function create(Request $request)
     {
+        Log::info($request);
+
         $this->validate($request, [
             'name' => 'required',
             'subcategory_id' => 'required',
             'price' => 'required',
         ]);
-
         $course = new Course();
         $course->name = $request->name;
         $course->description = $request->description;

@@ -11969,3 +11969,10 @@ textarea.form-control-lg {
 .fc-toolbar-title{
     margin-bottom:10%!important;
 }
+
+.swiper-slide{
+    text-align: center;
+}
+.select2-container {
+    z-index: 100000;
+}

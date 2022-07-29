@@ -7,11 +7,7 @@
             integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
             crossorigin="anonymous"></script>
 
-    <style>
-        .select2-container {
-            z-index: 100000;
-        }
-    </style>
+
     <title>ADMIN DASHBOARD: SOTTOCATEGORIE</title>
 
     <!-- EDIT Modal -->
@@ -94,7 +90,6 @@
         </div>
     </div>
 
-    <!-- ADD Modal -->
 
     <div class="w-100 h-100 p-3">
         <table id="table" class="w-100 h-100 bg-white"></table>

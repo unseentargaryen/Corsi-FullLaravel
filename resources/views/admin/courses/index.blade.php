@@ -14,97 +14,57 @@
     </style>
     <title>ADMIN DASHBOARD: CORSI</title>
 
-    <!-- EDIT Modal -->
-    <div class="modal fade" id="subcategoryEditModal" tabindex="1" aria-labelledby="subcategoryEditModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="subcategoryEditModalLabel">Dettagli Sottocategoria</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="w-100">
-                        <label id="subcategory-name-label">Nome Sottocategoria</label>
-                        <input id="edit-name-input" name="name" class="form form-control">
-                        <input id="details-id" name="id" type="hidden" class="subcategory-id-hidden">
-                    </div>
-                    <div class="w-100 mt-3 d-flex flex-column">
-                        <label>Categoria</label>
-                        <select id="edit-category-select" class="select2">
-                            @foreach($categories as $category)
-                                <option value="{{ $category->id }}">{{ $category->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="mt-3 alert d-flex flex-row align-items-center justify-content-between" role="alert"
-                         id="edit-alert">
-                        <p id="edit-alert-p" class="my-auto"></p>
-                        <div class="spinner-border text-secondary" role="status" id="edit-alert-spinner"></div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-success" onclick="handleEditSubmit()">SALVA</button>
-                    <button type="button" class="btn btn-outline-primary" id="toggle-visibility-btn"
-                            onclick="handleToggleVisibility()"></button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        CHIUDI
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
     <!-- ADD Modal -->
     <div class="modal fade" id="courseAddModal" tabindex="1" aria-labelledby="courseAddModalLabel"
          aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="courseAddModal">Aggiungi Corso</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <form class="w-100" id="addCourseForm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="courseAddModal">Aggiungi Corso</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="w-100">
+                            <label>Nome Corso</label>
+                            <input id="add-name-input" name="name" class="form form-control" required>
+                        </div>
+                        <div class="w-100 mt-3 d-flex flex-column">
+                            <label>Sottocategoria</label>
+                            <select id="add-subcategory-select" class="select2" data-live-search="true">
+                                @foreach($subcategories as $subcategory)
+                                    <option value="{{ $subcategory->id }}">{{ $subcategory->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="w-100 mt-3 d-flex flex-column">
+                            <label>Prezzo in €</label>
+                            <input id="add-price-input" name="price" class="form form-control" type="number" min="0"
+                                   required>
+                        </div>
+                        <div class="w-100 mt-3 d-flex flex-column">
+                            <label>Descrizione</label>
+                            <textarea class="form-control" name="description" id="add-description-input" required
+                                      rows="3"></textarea>
+                        </div>
+                        <div class="mt-3 alert d-flex flex-row align-items-center justify-content-between" role="alert"
+                             id="add-alert">
+                            <p id="add-alert-p" class="my-auto"></p>
+                            <div class="spinner-border text-secondary" role="status" id="add-alert-spinner"></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">SALVA</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            CHIUDI
+                        </button>
+                    </div>
                 </div>
-                <div class="modal-body">
-                    <div class="w-100">
-                        <label>Nome Corso</label>
-                        <input id="add-name-input" name="name" class="form form-control">
-                    </div>
-                    <div class="w-100 mt-3 d-flex flex-column">
-                        <label>Sottocategoria</label>
-                        <select id="add-subcategory-select" class="select2" data-live-search="true">
-                            @foreach($subcategories as $subcategory)
-                                <option value="{{ $subcategory->id }}">{{ $subcategory->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="w-100 mt-3 d-flex flex-column">
-                        <label>Prezzo in €</label>
-                        <input id="add-price-input" name="price" class="form form-control" type="number" min="0">
-                    </div>
-                    <div class="w-100 mt-3 d-flex flex-column">
-                        <label>Descrizione</label>
-                        <textarea class="form-control" name="description" id="add-description-input"
-                                  rows="3"></textarea>
-                    </div>
-                    <div class="mt-3 alert d-flex flex-row align-items-center justify-content-between" role="alert"
-                         id="add-alert">
-                        <p id="add-alert-p" class="my-auto"></p>
-                        <div class="spinner-border text-secondary" role="status" id="add-alert-spinner"></div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-success" onclick="handleAddSubmit()">SALVA</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        CHIUDI
-                    </button>
-                </div>
-            </div>
+            </form>
         </div>
     </div>
 
     <!-- ADD Modal -->
-
     <div class="w-100 h-100 p-3">
         <table id="table" class="w-100 h-100 bg-white"></table>
     </div>
@@ -116,16 +76,8 @@
 
         $('.select2').select2();
 
-        let addNameInput = $('#add-name-input');
-        let addPriceInput = $('#add-price-input');
-        let addDescriptionInput = $('#add-description-input');
-        let addSubcategorySelect = $('#add-subcategory-select');
-        let addAlert = $('#add-alert');
-        let addAlertP = $('#add-alert-p');
-        let addAlertSpinner = $('#add-alert-spinner');
-        addAlertSpinner.hide();
-
-        const handleAddSubmit = () => {
+        $('#addCourseForm').on('submit',function (e){
+            e.preventDefault();
             axios('{{ route('courses-create') }}', {
                 method: 'POST',
                 headers: {
@@ -158,8 +110,17 @@
                 addAlert.addClass('alert-danger');
                 addAlert.removeClass('alert-success');
             });
+        });
 
-        }
+        let addNameInput = $('#add-name-input');
+        let addPriceInput = $('#add-price-input');
+        let addDescriptionInput = $('#add-description-input');
+        let addSubcategorySelect = $('#add-subcategory-select');
+        let addAlert = $('#add-alert');
+        let addAlertP = $('#add-alert-p');
+        let addAlertSpinner = $('#add-alert-spinner');
+        addAlertSpinner.hide();
+
         const showCourse = (id) => {
             location.href = 'courses/show/' + id;
         }

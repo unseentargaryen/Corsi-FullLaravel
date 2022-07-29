@@ -126,6 +126,33 @@
                 html: 'Non ci sono posti per questa data!<br>Seleziona un\'altra data.',
             });
         </script>
+    @elseif(Cookie::get('purchase_cancelled') === 'true')
+        <script>
+            Swal.fire({
+                title: 'Annullato!',
+                icon: 'error',
+                confirmButtonText: 'Ok',
+                html: 'Hai annullato l\'acquisto.',
+            });
+        </script>
+    @elseif(Cookie::get('purchase_complete') === 'true')
+        <script>
+            Swal.fire({
+                title: 'CONGRATULAZIONI!',
+                icon: 'success',
+                confirmButtonText: 'OK!',
+                html: 'Hai effettuato una prenotazione con successo!<br>Ti manderemo ulteriori dettagli via email!',
+            });
+        </script>
+    @elseif(Cookie::get('general_error') === 'true')
+        <script>
+            Swal.fire({
+                title: 'Annullato!',
+                icon: 'error',
+                confirmButtonText: 'Ok',
+                html: 'C\'è stato un errore.<br>Riprova più tardi.',
+            });
+        </script>
     @endif
 
     <script src="/js/moment.js"></script>
@@ -150,16 +177,7 @@
         })
 
         const openEventModal = (event) => {
-            // let noSeatsP = $('#noseats-p');
-            // if (event.extendedProps.seats_available === 0) {
-            //     $('#payment-form').hide();
-            //     if (event.extendedProps.pendingBookings > 0) {
-            //         noSeatsP.text("Sono in corso le prenotazioni per gli ultimi posti disponibili. Riprova più tardi o seleziona un'altra data.");
-            //     }else{
-            //         noSeatsP.text("Siamo spiacenti,non ci sono posti disponibili per questo corso. Seleziona un'altra data.");
-            //     }
-            //     noSeatsP.show();
-            // }
+
             $('#lesson_id').val(event.id);
             $('#selectedDateStartP').text(moment(event.start).locale("it").format('D MMMM YYYY, HH:mm'));
             $('#selectedDateEndP').text(moment(event.end).locale("it").format('HH:mm'));
@@ -193,34 +211,4 @@
         });
 
     </script>
-
-    {{--    <script>--}}
-    {{--        paypal.Buttons({--}}
-    {{--            // Sets up the transaction when a payment button is clicked--}}
-    {{--            createOrder: (data, actions) => {--}}
-    {{--                console.log(data)--}}
-    {{--                console.log(actions)--}}
-    {{--                return actions.order.create({--}}
-    {{--                    purchase_units: [{--}}
-    {{--                        amount: {--}}
-    {{--                            value: '77.44' // Can also reference a variable or function--}}
-    {{--                        }--}}
-    {{--                    }]--}}
-    {{--                });--}}
-    {{--            },--}}
-    {{--            // Finalize the transaction after payer approval--}}
-    {{--            onApprove: (data, actions) => {--}}
-    {{--                return actions.order.capture().then(function(orderData) {--}}
-    {{--                    // Successful capture! For dev/demo purposes:--}}
-    {{--                    console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));--}}
-    {{--                    const transaction = orderData.purchase_units[0].payments.captures[0];--}}
-    {{--                    alert(`Transaction ${transaction.status}: ${transaction.id}\n\nSee console for all available details`);--}}
-    {{--                    // When ready to go live, remove the alert and show a success message within this page. For example:--}}
-    {{--                    // const element = document.getElementById('paypal-button-container');--}}
-    {{--                    // element.innerHTML = '<h3>Thank you for your payment!</h3>';--}}
-    {{--                    // Or go to another URL:  actions.redirect('thank_you.html');--}}
-    {{--                });--}}
-    {{--            }--}}
-    {{--        }).render('#paypal-button-container');--}}
-    {{--    </script>--}}
 @endsection

@@ -10,13 +10,67 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://npmcdn.com/flatpickr/dist/l10n/it.js"></script>
 
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.20.2/dist/bootstrap-table.min.css">
+    <script src="https://unpkg.com/bootstrap-table@1.20.2/dist/bootstrap-table.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"></script>
+
     <style>
         .dz-details {
             display: none;
         }
-
     </style>
     <title>ADMIN DASHBOARD: MODIFICA CORSO</title>
+
+    <div class="modal fade" id="lessonEditModal" tabindex="1" aria-labelledby="subcategoryAddModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="subcategoryAddModal">Modifica Lezione</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="w-100 mt-3">
+                        <label>Sede corso</label>
+                        <input id="edit-lesson-sede-input" name="sede" class="form form-control">
+                    </div>
+                    <div class="w-100 mt-3">
+                        <label>Numero partecipanti</label>
+                        <input id="edit-lesson-number-input" name="max_participants" class="form form-control">
+                    </div>
+                    <div class="w-100 mt-3">
+                        <label>Inizio</label>
+                        <input type="datetime-local" id="startDateEdit" class="form form-control flatpickr" required/>
+                    </div>
+                    <div class="w-100 mt-3">
+                        <label>Fine</label>
+                        <input type="datetime-local" id="endDateEdit" class="form form-control flatpickr" required/>
+                    </div>
+                    <div class="form-check mt-3">
+                        <input class="form-check-input" name="visible" type="checkbox" value="true"
+                               id="editLessonVisible">
+                        <label class="form-check-label" for="editLessonVisible">
+                            Attivo
+                        </label>
+                    </div>
+                    <div class="mt-3 alert d-flex flex-row align-items-center justify-content-center" role="alert"
+                         id="edit-lesson-alert" style="height: 75px">
+                        <p id="edit-lesson-alert-p" class="my-auto w-100 h-100 text-center"></p>
+                        <div class="spinner-border text-secondary" role="status" id="edit-lesson-alert-spinner"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" id="edit-lesson-id-hidden">
+                    <button type="button" class="btn btn-success" onclick="handleAddSubmit()">SALVA</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        CHIUDI
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="col px-5">
         <div class="row mb-3">
@@ -33,7 +87,7 @@
                         </div>
                         <div class="col-12 col-md-6 mt-3">
                             <label>Prezzo in €</label>
-                            <input type="text" id="price" name="price" value="{{$course->price}}"
+                            <input type="number" id="price" name="price" value="{{$course->price}}"
                                    class="form form-control"
                                    required/>
                         </div>
@@ -64,7 +118,7 @@
                         <div class="col-12">
                             <label for="description"> Descrizione del corso:</label>
                             <textarea type="text" id="description" name="description"
-                                      class="form form-control">{{$course->description}}</textarea>
+                                      class="form form-control" required>{{$course->description}}</textarea>
                         </div>
                     </div>
 
@@ -120,7 +174,7 @@
                         <div class="col-12">
                             <label for="sede"> Sede del corso:</label>
                             <input type="text" id="sede" name="sede" value="{{$course->sede}}"
-                                   class="form form-control">
+                                   class="form form-control" required>
                         </div>
                     </div>
                     <div class="row mt-3">
@@ -137,6 +191,13 @@
                         </div>
                     </div>
                 </form>
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <h2 class="col-12 col-md-8 offset-md-2 fw-bold">Lista Lezioni</h2>
+            <div class="col-12 col-md-8 offset-md-2 card p-3">
+                <table id="table" class="w-100 h-100 bg-white"></table>
             </div>
         </div>
 
@@ -163,7 +224,7 @@
         </div>
     </div>
 
-
+    <script src="/js/moment.js"></script>
     <script>
         $('#subcategoryPERROR').hide();
         $('#submitAlert').hide();
@@ -176,7 +237,6 @@
             $('#submitLessonSuccessAlert').hide();
             $('#submitLessonErrorAlert').hide();
 
-            console.log($("#dates").selectedDates);
             payload = {
                 course_id: {{ $course->id }},
                 max_participants: $("#max_participants").val(),
@@ -227,6 +287,45 @@
             },
         });
 
+        $("#dataEdit").flatpickr({
+            mode: "multiple",
+            locale: "it",
+            minDate: "today",
+            dateFormat: "Y-m-d",
+        });
+
+        $("#startTimeEdit").flatpickr({
+            locale: "it",
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+            time_24hr: true,
+            defaultDate: "09:00",
+            onChange: function (selectedDates, dateStr, instance) {
+                console.log(selectedDates);
+            },
+        });
+
+        $("#endTimeEdit").flatpickr({
+            locale: "it",
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+            time_24hr: true,
+            defaultDate: "18:00",
+            onChange: function (selectedDates, dateStr, instance) {
+                console.log(selectedDates);
+            },
+        });
+
+        // $("#startDateEdit").flatpickr({
+        //     locale: "it",
+        //     enableTime: true,
+        // });
+        // $("#endDateEdit").flatpickr({
+        //     locale: "it",
+        //     enableTime: true,
+        // });
 
         $('#editCourseForm').on('submit', function (e) {
             $('#submitAlert').hide();
@@ -322,5 +421,96 @@
                 });
             }
         };
+
+        const handleAddSubmit = () => {
+            let alertP = $('#edit-lesson-alert-p');
+            let spinner = $('#edit-lesson-alert-spinner');
+            spinner.show();
+            let url = '{{ route('lessons-edit') }}';
+
+            axios(url,{
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                },
+                data: {
+                    id: $('#edit-lesson-id-hidden').val(),
+                    sede: $('#edit-lesson-sede-input').val(),
+                    max_participants: $('#edit-lesson-number-input').val(),
+                    start: $('#startDateEdit').val(),
+                    end: $('#endDateEdit').val(),
+                    visible: document.getElementById('editLessonVisible').checked == true,
+                }
+            }).then((res) => {
+                if (res.status === 200) {
+                        alertP.text('Lezione aggiornata correttamente');
+                        alertP.removeClass('alert-danger');
+                        alertP.addClass('alert-success');
+                        spinner.hide();
+                        setTimeout(() => {
+                            location.reload();
+                        }, 3000);
+                } else {
+                    throw 'Impossibile aggiornare la lezione';
+                }
+            }).catch((msg) => {
+                alertP.text(msg);
+                alertP.addClass('alert-danger');
+                alertP.removeClass('alert-success');
+            });
+
+        }
+
+        const onDetailsModalOpen = (id, max_participants, visible, sede, start, end) => {
+            $('#edit-lesson-alert-spinner').hide();
+            $('#edit-lesson-id-hidden').val(id);
+            let editLessonSedeInput = $('#edit-lesson-sede-input');
+            editLessonSedeInput.val(sede);
+            let editLessonNumPartInput = $('#edit-lesson-number-input');
+            editLessonNumPartInput.val(max_participants);
+
+            let editLessonVisible = $('#editLessonVisible');
+            editLessonVisible.prop('checked', visible);
+
+            const startDateEdit = document.querySelector("#startDateEdit");
+            const endDateEdit = document.querySelector("#endDateEdit");
+
+            const tomorrow = new Date()
+            tomorrow.setDate(new Date().getDate() + 1)
+            startDateEdit.value = moment(start).add('h',2).toISOString().slice(0, 16);
+            endDateEdit.value = moment(end).add('h',2).toISOString().slice(0, 16);
+
+            startDateEdit.min = tomorrow.toISOString().slice(0, 16);
+            endDateEdit.min = tomorrow.toISOString().slice(0, 16);
+        }
+
+        const actionsFormatter = (value, row) => {
+            return ('<button onclick="onDetailsModalOpen(' + row.id + ',' + row.max_participants + ',' + row.visible + ',\'' + row.sede + '\',\'' + row.start + '\',\'' + row.end + '\')" data-bs-toggle="modal" data-bs-target="#lessonEditModal" class="btn"><img src="{{ asset("images/settings-icon.svg") }}" alt="dettagli"></img></button>');
+        }
+
+        $('#table').bootstrapTable({
+            data: {{ Js::from($lessons)}},
+            search: true,
+            searchHighlight: true,
+            locale: 'en-US',
+            columns: [{
+                field: 'start',
+                title: 'Data',
+                class: 'text-center w-10',
+            }, {
+                field: 'sede',
+                title: 'Sede',
+                class: 'text-center w-10',
+            }, {
+                field: 'max_participants',
+                title: 'Posti massimi',
+                class: 'text-center w-10',
+            }, {
+                field: 'actions',
+                title: 'Azioni',
+                class: 'text-center w-10',
+                formatter: actionsFormatter,
+            }]
+        });
     </script>
 @endsection
