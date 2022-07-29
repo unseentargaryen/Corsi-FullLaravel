@@ -114,6 +114,7 @@ class PaymentController extends Controller
                 $temp = explode('=', $param);
                 $inputs[$temp[0]] = $temp[1];
             }
+            dd($inputs);
             $payer_id = $inputs['PayerId'];
             $payment_id = $inputs['PaymentId'];
         }
