@@ -100,7 +100,7 @@ class PaymentController extends Controller
             dd("fail");
         }
 
-        if ($request->get('PayerID') && $request->get('paymentId')) {
+        if ($request->query('PayerID') && $request->query('paymentId')) {
             $transaction = $this->gateway->completePurchase(array(
                 'payer_id' => $request->input('PayerID'),
                 'transactionReference' => $request->input('paymentId')
@@ -145,7 +145,7 @@ class PaymentController extends Controller
             }
         } else {
             Log::info($request);
-            return $request->path();
+            return json_encode($request->query());
         }
     }
 
