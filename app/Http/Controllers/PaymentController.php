@@ -145,7 +145,7 @@ class PaymentController extends Controller
             }
         } else {
             Log::info($request);
-            return json_encode($request->query());
+            return json_encode($request->fullUrlWithQuery());
         }
     }
 
