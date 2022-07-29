@@ -9,6 +9,7 @@ use App\Models\PendingBooking;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Omnipay\Omnipay;
 
 class PaymentController extends Controller
@@ -143,7 +144,8 @@ class PaymentController extends Controller
                 return $response->getMessage();
             }
         } else {
-            return 'Payment declined!! ' . $request->paymentId . " ----" . $request->PayerID;
+            Log::info($request);
+            return json_encode($request->toArray());
         }
     }
 
