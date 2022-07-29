@@ -3,15 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
-use App\Models\Course;
 use App\Models\Lesson;
 use App\Models\Payment;
 use App\Models\PendingBooking;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cookie;
-use Illuminate\Support\Facades\Log;
 use Omnipay\Omnipay;
 
 class PaymentController extends Controller
@@ -23,7 +20,7 @@ class PaymentController extends Controller
         $this->gateway = Omnipay::create('PayPal_Rest');
         $this->gateway->setClientId(env('PAYPAL_CLIENT_ID'));
         $this->gateway->setSecret(env('PAYPAL_CLIENT_SECRET'));
-        $this->gateway->setTestMode(true);
+        $this->gateway->setTestMode(false);
     }
 
     public function pay(Request $request)
