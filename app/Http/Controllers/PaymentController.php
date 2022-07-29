@@ -79,7 +79,6 @@ class PaymentController extends Controller
             ])->send();
 
             if ($response->isRedirect()) {
-                return $response;
                 $response->redirect();
             } else {
                 return $response->getMessage();
@@ -146,7 +145,7 @@ class PaymentController extends Controller
             }
         } else {
             Log::info($request);
-            return json_encode($request->fullUrlWithQuery(['' => '']));
+            return request()->query('PayerID');
         }
     }
 
