@@ -100,7 +100,7 @@ class PaymentController extends Controller
             dd("fail");
         }
 
-        if (Request::get('PayerID') && Request::get('paymentId')) {
+        if ($request->get('PayerID') && $request->get('paymentId')) {
             $transaction = $this->gateway->completePurchase(array(
                 'payer_id' => $request->input('PayerID'),
                 'transactionReference' => $request->input('paymentId')
