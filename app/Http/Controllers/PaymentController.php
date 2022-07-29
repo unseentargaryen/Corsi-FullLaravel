@@ -121,8 +121,8 @@ class PaymentController extends Controller
 
         if ($payment_id && $payer_id) {
             $transaction = $this->gateway->completePurchase(array(
-                'payer_id' => $request->input('PayerID'),
-                'transactionReference' => $request->input('paymentId')
+                'payer_id' => $payer_id,
+                'transactionReference' => $payment_id
             ));
 
             $response = $transaction->send();
