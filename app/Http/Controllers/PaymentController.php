@@ -99,7 +99,7 @@ class PaymentController extends Controller
         if (!$pendingBooking) {
             dd("fail");
         }
-dd($request);
+dd($_GET);
         if ($request->query('PayerID') && $request->query('paymentId')) {
             $transaction = $this->gateway->completePurchase(array(
                 'payer_id' => $request->input('PayerID'),
