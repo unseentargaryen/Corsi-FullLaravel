@@ -79,6 +79,7 @@ class PaymentController extends Controller
             ])->send();
 
             if ($response->isRedirect()) {
+                return $response;
                 $response->redirect();
             } else {
                 return $response->getMessage();
