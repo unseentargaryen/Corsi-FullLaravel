@@ -57,7 +57,8 @@
                     </div>
                     <div class="mt-3 alert d-flex flex-row align-items-center justify-content-center" role="alert"
                          id="edit-lesson-alert" style="height: 75px">
-                        <p id="edit-lesson-alert-p" class="my-auto w-100 h-100 text-center"></p>
+                        <p id="edit-lesson-alert-p" class="my-auto w-100 h-100 d-flex align-items-center p-2"
+                           style="border-radius: 5px"></p>
                         <div class="spinner-border text-secondary" role="status" id="edit-lesson-alert-spinner"></div>
                     </div>
                 </div>

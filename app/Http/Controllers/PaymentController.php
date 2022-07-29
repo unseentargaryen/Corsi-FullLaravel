@@ -140,7 +140,6 @@ class PaymentController extends Controller
                 $booking->currency = $pendingBooking->currency;
                 $booking->save();
 
-
                 $payment = new Payment();
                 $payment->payment_id = $arr['id'];
                 $payment->payer_id = $arr['payer']['payer_info']['payer_id'];
