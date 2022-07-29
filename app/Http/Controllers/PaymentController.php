@@ -145,7 +145,7 @@ class PaymentController extends Controller
             }
         } else {
             Log::info($request);
-            return $request->query->all();
+            return $request->path();
         }
     }
 
